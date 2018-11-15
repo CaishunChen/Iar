@@ -1,0 +1,1489 @@
+###############################################################################
+#
+# IAR ELF Linker V7.10.1.6676/W32 for ARM                 15/Nov/2018  18:21:04
+# Copyright 2007-2014 IAR Systems AB.
+#
+#    Output file  =  
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Exe\wave.out
+#    Map file     =  
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\List\wave.map
+#    Command line =  
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\AHRS_EKF.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\BNO055.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Calculate_Wave.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Communication.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Communication_OriData.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\delay_init.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\diskio.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\eeprom.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\ff.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\filter.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\GPS.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\ICM2060x.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\IMU_Update.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Library_Filter.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\main.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\malloc.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Master_i2c.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\misc.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\ringbuffer.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\RX8010.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Safe_Check.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\sdfatfs.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\sdio_sdcard.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\Senser_calibration.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\startup_stm32f40xx.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_adc.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_can.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_dma.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_exti.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_flash.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_gpio.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_i2c.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_it.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_iwdg.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_rcc.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_sdio.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_spi.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_syscfg.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_tim.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\stm32f4xx_usart.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\sys.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\syscall.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\system_stm32f4xx.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\SysTick.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\time_init.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\uart_init.o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj\unicode.o
+#        --redirect _Printf=_PrintfFull --redirect _Scanf=_ScanfFull -o
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Exe\wave.out
+#        --map
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\List\wave.map
+#        --config
+#        C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\wave.icf
+#        --semihosting --entry __iar_program_start "C:\Program Files (x86)\IAR
+#        Systems\Embedded Workbench
+#        7.0\arm\CMSIS\Lib\IAR\iar_cortexM4lf_math.a" --vfe
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A1":  place at 0x08000000 { ro section .intvec };
+"P1":  place in [from 0x08000000 to 0x080dffff] { ro };
+"P2":  place in [from 0x20000000 to 0x2001ffff] { rw, block CSTACK, block HEAP };
+
+  Section             Kind        Address     Size  Object
+  -------             ----        -------     ----  ------
+"A1":                                        0x188
+  .intvec             ro code  0x08000000    0x188  startup_stm32f40xx.o [1]
+                             - 0x08000188    0x188
+
+"P1":                                      0x1b114
+  .rodata             const    0x08000188   0x8800  arm_common_tables.o [4]
+  .text               ro code  0x08008988   0x22a8  ff.o [1]
+  .text               ro code  0x0800ac30    0x150  diskio.o [1]
+  .text               ro code  0x0800ad80     0x8c  unicode.o [1]
+  .text               ro code  0x0800ae0c   0x2264  sdio_sdcard.o [1]
+  .text               ro code  0x0800d070    0x132  I64DivMod.o [6]
+  .text               ro code  0x0800d1a2     0x2e  copy_init3.o [6]
+  .text               ro code  0x0800d1d0    0x174  malloc.o [1]
+  .text               ro code  0x0800d344    0x1b0  stm32f4xx_rcc.o [1]
+  .text               ro code  0x0800d4f4    0x120  stm32f4xx_gpio.o [1]
+  .text               ro code  0x0800d614     0x84  misc.o [1]
+  .text               ro code  0x0800d698     0xd4  stm32f4xx_sdio.o [1]
+  .text               ro code  0x0800d76c     0x10  sys.o [1]
+  .text               ro code  0x0800d77c    0x298  stm32f4xx_dma.o [1]
+  .text               ro code  0x0800da14      0xc  memcpy.o [3]
+  .text               ro code  0x0800da20      0x2  I64DivZer.o [6]
+  .text               ro code  0x0800da22     0x22  zero_init3.o [6]
+  .text               ro code  0x0800da44     0x76  ABImemcpy_unaligned.o [6]
+  .text               ro code  0x0800daba      0xa  xsprout.o [3]
+  .text               ro code  0x0800dac4   0x193a  Communication.o [1]
+  .rodata             const    0x0800f3fe      0x1  IMU_Update.o [1]
+  .text               ro code  0x0800f400    0x720  uart_init.o [1]
+  .text               ro code  0x0800fb20     0x84  ringbuffer.o [1]
+  .text               ro code  0x0800fba4     0x14  memset.o [3]
+  .text               ro code  0x0800fbb8    0x7c4  GPS.o [1]
+  .text               ro code  0x0801037c    0xd98  sdfatfs.o [1]
+  .text               ro code  0x08011114     0x4e  FltToDbl.o [5]
+  .text               ro code  0x08011164    0x1a2  DblMul.o [5]
+  .text               ro code  0x08011308     0x90  DblToFlt.o [5]
+  .text               ro code  0x08011398    0x2cc  stm32f4xx_usart.o [1]
+  .text               ro code  0x08011664     0x66  ABImemset.o [6]
+  .text               ro code  0x080116ca      0x8  sdfatfs.o [1]
+  .text               ro code  0x080116d4     0x16  strchr.o [6]
+  .text               ro code  0x080116ea     0x10  atof.o [5]
+  .text               ro code  0x080116fa      0x8  atoi.o [3]
+  .text               ro code  0x08011704     0x34  sprintf.o [3]
+  .text               ro code  0x08011738     0x1c  strcat.o [3]
+  .text               ro code  0x08011754     0x2c  strstr.o [3]
+  .text               ro code  0x08011780    0x168  xstod.o [5]
+  .text               ro code  0x080118e8    0x19c  xstoul.o [3]
+  .text               ro code  0x08011a84    0xd86  xprintffull.o [3]
+  .text               ro code  0x0801280a    0x130  xstopfx.o [3]
+  .text               ro code  0x0801293c    0x1b4  xstoflt.o [3]
+  .text               ro code  0x08012af0     0x30  I32ToDbl.o [5]
+  .text               ro code  0x08012b20     0xe8  DblAdd.o [5]
+  .text               ro code  0x08012c08    0x200  xdtento.o [5]
+  .text               ro code  0x08012e08    0x200  xstoxflt.o [3]
+  .text               ro code  0x08013008    0x114  xdscale.o [5]
+  .text               ro code  0x0801311c     0x58  memchr.o [6]
+  .text               ro code  0x08013174      0xc  errno.o [3]
+  .text               ro code  0x08013180     0x36  strlen.o [6]
+  .text               ro code  0x080131b6     0x42  xdnorm.o [5]
+  .text               ro code  0x080131f8     0x2e  DblCmpLe.o [5]
+  .text               ro code  0x08013228     0x2e  DblCmpGe.o [5]
+  .text               ro code  0x08013258     0x58  DblToI32.o [5]
+  .text               ro code  0x080132b0    0x180  DblSub.o [5]
+  .text               ro code  0x08013430    0x246  DblDiv.o [5]
+  .text               ro code  0x08013676      0xe  div.o [3]
+  .text               ro code  0x08013684     0x20  DblCmpEq.o [5]
+  .text               ro code  0x080136a4     0x56  xdunscal.o [5]
+  .text               ro code  0x080136fa      0x2  xtls.o [3]
+  .text               ro code  0x080136fc   0x1652  Calculate_Wave.o [1]
+  .text               ro code  0x08014d4e      0x6  sinf.o [5]
+  .text               ro code  0x08014d54     0x4c  round.o [5]
+  .text               ro code  0x08014da0     0xb0  arm_cfft_radix4_init_f32.o [4]
+  .text               ro code  0x08014e50    0x6f8  arm_cfft_radix4_f32.o [4]
+  .text               ro code  0x08015548     0xf4  atan2.o [5]
+  .text               ro code  0x0801563c    0x51e  qsort.o [3]
+  .text               ro code  0x08015b5c    0x16c  xfsin.o [5]
+  .text               ro code  0x08015cc8     0x7e  xdint.o [5]
+  .text               ro code  0x08015d46     0xa8  arm_bitreversal.o [4]
+  .text               ro code  0x08015dee     0x40  xdtest.o [5]
+  .text               ro code  0x08015e30    0x1f0  xatan.o [5]
+  .text               ro code  0x08016020     0x78  ABImemmove_unaligned.o [6]
+  .text               ro code  0x08016098     0xec  xfquad.o [5]
+  .text               ro code  0x08016184     0x50  xfdint.o [5]
+  .text               ro code  0x080161d4    0x13c  fmodf.o [5]
+  .text               ro code  0x08016310      0xc  iarEdom.o [6]
+  .text               ro code  0x0801631c    0xb98  Safe_Check.o [1]
+  .text               ro code  0x08016eb4    0x67c  RX8010.o [1]
+  .text               ro code  0x08017530     0xa8  SysTick.o [1]
+  .text               ro code  0x080175d8    0x630  main.o [1]
+  .text               ro code  0x08017c08    0x154  system_stm32f4xx.o [1]
+  .text               ro code  0x08017d5c     0x74  time_init.o [1]
+  .text               ro code  0x08017dd0    0x230  Communication_OriData.o [1]
+  .text               ro code  0x08018000    0x594  BNO055.o [1]
+  .text               ro code  0x08018594    0x214  eeprom.o [1]
+  .text               ro code  0x080187a8    0x2d0  ICM2060x.o [1]
+  .text               ro code  0x08018a78    0x44c  filter.o [1]
+  .text               ro code  0x08018ec4    0x100  sqrt.o [5]
+  .text               ro code  0x08018fc4     0xc0  atan.o [5]
+  .text               ro code  0x08019084    0x608  IMU_Update.o [1]
+  .text               ro code  0x0801968c    0x530  Senser_calibration.o [1]
+  .text               ro code  0x08019bbc     0xfa  stm32f4xx_tim.o [1]
+  .text               ro code  0x08019cb8    0x238  stm32f4xx_flash.o [1]
+  .text               ro code  0x08019ef0    0x3d0  Master_i2c.o [1]
+  .text               ro code  0x0801a2c0    0x130  Library_Filter.o [1]
+  .text               ro code  0x0801a3f0    0x160  tanf.o [5]
+  .text               ro code  0x0801a550      0x6  cosf.o [5]
+  .text               ro code  0x0801a558    0x244  stm32f4xx_it.o [1]
+  .rodata             const    0x0801a79c    0x1e0  unicode.o [1]
+  .rodata             const    0x0801a97c    0x1e0  unicode.o [1]
+  .rodata             const    0x0801ab5c    0x100  unicode.o [1]
+  .rodata             const    0x0801ac5c     0xa0  sdfatfs.o [1]
+  .rodata             const    0x0801acfc     0x80  ff.o [1]
+  .text               ro code  0x0801ad7c     0x28  data_init.o [6]
+  .rodata             const    0x0801ada4     0x24  ff.o [1]
+  .rodata             const    0x0801adc8     0x24  sdfatfs.o [1]
+  .iar.init_table     const    0x0801adec     0x24  - Linker created -
+  .rodata             const    0x0801ae10     0x20  ICM2060x.o [1]
+  .rodata             const    0x0801ae30     0x20  sdfatfs.o [1]
+  .rodata             const    0x0801ae50     0x1c  sdfatfs.o [1]
+  .text               ro code  0x0801ae6c     0x1a  fpinit_M.o [5]
+  .text               ro code  0x0801ae88     0x1a  cmain.o [6]
+  .text               ro code  0x0801aea2      0x4  low_level_init.o [3]
+  .text               ro code  0x0801aea6      0x4  exit.o [3]
+  .text               ro code  0x0801aeac      0xa  cexit.o [6]
+  .text               ro code  0x0801aeb8     0x14  exit.o [7]
+  .rodata             const    0x0801aecc     0x18  sdfatfs.o [1]
+  .rodata             const    0x0801aee4     0x18  sdfatfs.o [1]
+  .rodata             const    0x0801aefc     0x14  Communication.o [1]
+  .rodata             const    0x0801af10     0x14  sdfatfs.o [1]
+  .rodata             const    0x0801af24     0x10  ff.o [1]
+  .rodata             const    0x0801af34     0x10  sdfatfs.o [1]
+  .rodata             const    0x0801af44     0x10  sdfatfs.o [1]
+  .text               ro code  0x0801af54     0x10  startup_stm32f40xx.o [1]
+  .rodata             const    0x0801af64      0xc  Calculate_Wave.o [1]
+  .rodata             const    0x0801af70      0xc  ff.o [1]
+  .rodata             const    0x0801af7c      0xc  ff.o [1]
+  .rodata             const    0x0801af88      0xc  sdfatfs.o [1]
+  .rodata             const    0x0801af94      0xc  sdfatfs.o [1]
+  .rodata             const    0x0801afa0      0xc  sdfatfs.o [1]
+  .rodata             const    0x0801afac      0xc  sdfatfs.o [1]
+  .rodata             const    0x0801afb8      0xc  sdfatfs.o [1]
+  .rodata             const    0x0801afc4      0xc  sdfatfs.o [1]
+  .text               ro code  0x0801afd0      0xc  cstartup_M.o [6]
+  .rodata             const    0x0801afdc      0x8  ff.o [1]
+  .rodata             const    0x0801afe4      0x8  ff.o [1]
+  .rodata             const    0x0801afec      0x8  ff.o [1]
+  .rodata             const    0x0801aff4      0x8  ff.o [1]
+  .rodata             const    0x0801affc      0x8  ff.o [1]
+  .rodata             const    0x0801b004      0x8  ff.o [1]
+  .rodata             const    0x0801b00c      0x8  ff.o [1]
+  .rodata             const    0x0801b014      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b01c      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b024      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b02c      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b034      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b03c      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b044      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b04c      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b054      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b05c      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b064      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b06c      0x8  sdfatfs.o [1]
+  .rodata             const    0x0801b074      0x4  ff.o [1]
+  .rodata             const    0x0801b078      0x4  ff.o [1]
+  .rodata             const    0x0801b07c      0x4  IMU_Update.o [1]
+  .rodata             const    0x0801b080      0x4  IMU_Update.o [1]
+  .rodata             const    0x0801b084      0x4  IMU_Update.o [1]
+  .rodata             const    0x0801b088      0x4  IMU_Update.o [1]
+  .rodata             const    0x0801b08c      0x4  IMU_Update.o [1]
+  .rodata             const    0x0801b090      0x4  IMU_Update.o [1]
+  .rodata             const    0x0801b094      0x4  malloc.o [1]
+  .rodata             const    0x0801b098      0x4  malloc.o [1]
+  .rodata             const    0x0801b09c      0x4  malloc.o [1]
+  .text               ro code  0x0801b0a0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0a4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0a8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0ac      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0b0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0b4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0b8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0bc      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0c0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0c4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0c8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0cc      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0d0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0d4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0d8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0dc      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0e0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0e4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0e8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0ec      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0f0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0f4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0f8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b0fc      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b100      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b104      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b108      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b10c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b110      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b114      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b118      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b11c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b120      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b124      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b128      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b12c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b130      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b134      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b138      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b13c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b140      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b144      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b148      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b14c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b150      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b154      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b158      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b15c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b160      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b164      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b168      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b16c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b170      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b174      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b178      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b17c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b180      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b184      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b188      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b18c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b190      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b194      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b198      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b19c      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1a0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1a4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1a8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1ac      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1b0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1b4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1b8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1bc      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1c0      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1c4      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1c8      0x4  startup_stm32f40xx.o [1]
+  .text               ro code  0x0801b1cc      0x4  startup_stm32f40xx.o [1]
+  .rodata             const    0x0801b1d0      0x0  zero_init3.o [6]
+  .rodata             const    0x0801b1d0      0x0  copy_init3.o [6]
+  Initializer bytes   ro data  0x0801b1d0     0xcc  <for P2 s0>
+                             - 0x0801b29c  0x1b114
+
+"P2", part 1 of 3:                            0xcc
+  P2 s0                        0x20000000     0xcc  <Init block>
+    .data             inited   0x20000000     0x14  malloc.o [1]
+    .data             inited   0x20000014     0x10  IMU_Update.o [1]
+    .data             inited   0x20000024     0x10  IMU_Update.o [1]
+    .data             inited   0x20000034     0x10  stm32f4xx_rcc.o [1]
+    .data             inited   0x20000044      0x4  BNO055.o [1]
+    .data             inited   0x20000048      0x4  BNO055.o [1]
+    .data             inited   0x2000004c      0x4  Communication.o [1]
+    .data             inited   0x20000050      0x4  Communication.o [1]
+    .data             inited   0x20000054      0x4  filter.o [1]
+    .data             inited   0x20000058      0x4  filter.o [1]
+    .data             inited   0x2000005c      0x4  filter.o [1]
+    .data             inited   0x20000060      0x4  filter.o [1]
+    .data             inited   0x20000064      0x4  filter.o [1]
+    .data             inited   0x20000068      0x4  filter.o [1]
+    .data             inited   0x2000006c      0x4  filter.o [1]
+    .data             inited   0x20000070      0x4  filter.o [1]
+    .data             inited   0x20000074      0x4  filter.o [1]
+    .data             inited   0x20000078      0x4  filter.o [1]
+    .data             inited   0x2000007c      0x4  filter.o [1]
+    .data             inited   0x20000080      0x4  filter.o [1]
+    .data             inited   0x20000084      0x4  filter.o [1]
+    .data             inited   0x20000088      0x4  filter.o [1]
+    .data             inited   0x2000008c      0x4  filter.o [1]
+    .data             inited   0x20000090      0x4  filter.o [1]
+    .data             inited   0x20000094      0x4  filter.o [1]
+    .data             inited   0x20000098      0x4  filter.o [1]
+    .data             inited   0x2000009c      0x4  filter.o [1]
+    .data             inited   0x200000a0      0x4  filter.o [1]
+    .data             inited   0x200000a4      0x4  filter.o [1]
+    .data             inited   0x200000a8      0x4  filter.o [1]
+    .data             inited   0x200000ac      0x4  GPS.o [1]
+    .data             inited   0x200000b0      0x4  IMU_Update.o [1]
+    .data             inited   0x200000b4      0x4  RX8010.o [1]
+    .data             inited   0x200000b8      0x4  sdfatfs.o [1]
+    .data             inited   0x200000bc      0x4  sdfatfs.o [1]
+    __DLIB_PERTHREAD  inited   0x200000c0      0x4  errno.o [3]
+    .data             inited   0x200000c4      0x1  ICM2060x.o [1]
+    .data             inited   0x200000c5      0x1  Safe_Check.o [1]
+    .data             inited   0x200000c6      0x1  Safe_Check.o [1]
+    .data             inited   0x200000c7      0x1  Safe_Check.o [1]
+    .data             inited   0x200000c8      0x1  Safe_Check.o [1]
+    .data             inited   0x200000c9      0x1  sdio_sdcard.o [1]
+                             - 0x200000cc     0xcc
+
+"P2", part 2 of 3:                          0x942c
+  .bss                zero     0x200000cc   0x2800  malloc.o [1]
+  .bss                zero     0x200028cc   0x2000  Calculate_Wave.o [1]
+  .bss                zero     0x200048cc   0x2000  Calculate_Wave.o [1]
+  .bss                zero     0x200068cc   0x1000  Calculate_Wave.o [1]
+  .bss                zero     0x200078cc    0x280  malloc.o [1]
+  .bss                zero     0x20007b4c    0x234  sdfatfs.o [1]
+  .bss                zero     0x20007d80    0x22c  sdfatfs.o [1]
+  .bss                zero     0x20007fac    0x22c  sdfatfs.o [1]
+  .bss                zero     0x200081d8    0x22c  sdfatfs.o [1]
+  .bss                zero     0x20008404    0x200  sdfatfs.o [1]
+  .bss                zero     0x20008604    0x190  Calculate_Wave.o [1]
+  .bss                zero     0x20008794    0x190  Calculate_Wave.o [1]
+  .bss                zero     0x20008924     0x84  BNO055.o [1]
+  .bss                zero     0x200089a8     0x84  filter.o [1]
+  .bss                zero     0x20008a2c     0x84  filter.o [1]
+  .bss                zero     0x20008ab0     0x84  filter.o [1]
+  .bss                zero     0x20008b34     0x84  filter.o [1]
+  .bss                zero     0x20008bb8     0x84  filter.o [1]
+  .bss                zero     0x20008c3c     0x64  BNO055.o [1]
+  .bss                zero     0x20008ca0     0x64  GPS.o [1]
+  .bss                zero     0x20008d04     0x64  GPS.o [1]
+  .bss                zero     0x20008d68     0x64  uart_init.o [1]
+  .bss                zero     0x20008dd0     0x58  sdio_sdcard.o [1]
+  .bss                zero     0x20008e28     0x48  Safe_Check.o [1]
+  .bss                zero     0x20008e70     0x40  IMU_Update.o [1]
+  .bss                zero     0x20008eb0     0x3c  eeprom.o [1]
+  .bss                zero     0x20008eec     0x34  Communication.o [1]
+  .bss                zero     0x20008f20     0x34  Communication.o [1]
+  .bss                zero     0x20008f54     0x34  Communication.o [1]
+  .bss                zero     0x20008f88     0x34  GPS.o [1]
+  .bss                zero     0x20008fbc     0x30  ff.o [1]
+  .bss                zero     0x20008fec     0x2c  RX8010.o [1]
+  .bss                zero     0x20009018     0x24  ff.o [1]
+  .bss                zero     0x2000903c     0x20  Communication_OriData.o [1]
+  .bss                zero     0x2000905c     0x20  filter.o [1]
+  .bss                zero     0x2000907c     0x20  filter.o [1]
+  .bss                zero     0x2000909c     0x20  filter.o [1]
+  .bss                zero     0x200090bc     0x20  filter.o [1]
+  .bss                zero     0x200090dc     0x20  filter.o [1]
+  .bss                zero     0x200090fc     0x20  filter.o [1]
+  .bss                zero     0x2000911c     0x20  filter.o [1]
+  .bss                zero     0x2000913c     0x20  filter.o [1]
+  .bss                zero     0x2000915c     0x20  filter.o [1]
+  .bss                zero     0x2000917c     0x20  filter.o [1]
+  .bss                zero     0x2000919c     0x20  filter.o [1]
+  .bss                zero     0x200091bc     0x20  filter.o [1]
+  .bss                zero     0x200091dc     0x20  sdfatfs.o [1]
+  .bss                zero     0x200091fc     0x20  sdfatfs.o [1]
+  .bss                zero     0x2000921c     0x20  sdfatfs.o [1]
+  .bss                zero     0x2000923c     0x20  sdfatfs.o [1]
+  .bss                zero     0x2000925c     0x18  sdio_sdcard.o [1]
+  .bss                zero     0x20009274     0x18  sdio_sdcard.o [1]
+  .bss                zero     0x2000928c     0x14  BNO055.o [1]
+  .bss                zero     0x200092a0     0x14  BNO055.o [1]
+  .bss                zero     0x200092b4     0x14  BNO055.o [1]
+  .bss                zero     0x200092c8     0x14  BNO055.o [1]
+  .bss                zero     0x200092dc     0x14  Calculate_Wave.o [1]
+  .bss                zero     0x200092f0     0x14  Communication.o [1]
+  .bss                zero     0x20009304     0x14  Communication.o [1]
+  .bss                zero     0x20009318     0x14  eeprom.o [1]
+  .bss                zero     0x2000932c     0x14  GPS.o [1]
+  .bss                zero     0x20009340     0x14  sdfatfs.o [1]
+  .bss                zero     0x20009354     0x14  sdio_sdcard.o [1]
+  .bss                zero     0x20009368     0x10  Calculate_Wave.o [1]
+  .bss                zero     0x20009378     0x10  IMU_Update.o [1]
+  .bss                zero     0x20009388     0x10  IMU_Update.o [1]
+  .bss                zero     0x20009398     0x10  sdio_sdcard.o [1]
+  .bss                zero     0x200093a8     0x10  sdio_sdcard.o [1]
+  .bss                zero     0x200093b8      0xc  Communication.o [1]
+  .bss                zero     0x200093c4      0xc  IMU_Update.o [1]
+  .bss                zero     0x200093d0      0xc  IMU_Update.o [1]
+  .bss                zero     0x200093dc      0xc  IMU_Update.o [1]
+  .bss                zero     0x200093e8      0xc  sdfatfs.o [1]
+  .bss                zero     0x200093f4      0xc  sdfatfs.o [1]
+  .bss                zero     0x20009400      0xc  sdfatfs.o [1]
+  .bss                zero     0x2000940c      0x4  BNO055.o [1]
+  .bss                zero     0x20009410      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x20009414      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x20009418      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x2000941c      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x20009420      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x20009424      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x20009428      0x4  Calculate_Wave.o [1]
+  .bss                zero     0x2000942c      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009430      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009434      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009438      0x4  IMU_Update.o [1]
+  .bss                zero     0x2000943c      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009440      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009444      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009448      0x4  IMU_Update.o [1]
+  .bss                zero     0x2000944c      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009450      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009454      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009458      0x4  IMU_Update.o [1]
+  .bss                zero     0x2000945c      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009460      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009464      0x4  IMU_Update.o [1]
+  .bss                zero     0x20009468      0x4  IMU_Update.o [1]
+  .bss                zero     0x2000946c      0x4  main.o [1]
+  .bss                zero     0x20009470      0x4  main.o [1]
+  .bss                zero     0x20009474      0x4  main.o [1]
+  .bss                zero     0x20009478      0x4  main.o [1]
+  .bss                zero     0x2000947c      0x4  main.o [1]
+  .bss                zero     0x20009480      0x4  main.o [1]
+  .bss                zero     0x20009484      0x4  main.o [1]
+  .bss                zero     0x20009488      0x4  main.o [1]
+  .bss                zero     0x2000948c      0x4  sdio_sdcard.o [1]
+  .bss                zero     0x20009490      0x4  Senser_calibration.o [1]
+  .bss                zero     0x20009494      0x4  Senser_calibration.o [1]
+  .bss                zero     0x20009498      0x4  Senser_calibration.o [1]
+  .bss                zero     0x2000949c      0x4  Senser_calibration.o [1]
+  .bss                zero     0x200094a0      0x4  Senser_calibration.o [1]
+  .bss                zero     0x200094a4      0x4  Senser_calibration.o [1]
+  .bss                zero     0x200094a8      0x2  BNO055.o [1]
+  .bss                zero     0x200094aa      0x2  Communication.o [1]
+  .bss                zero     0x200094ac      0x2  ff.o [1]
+  .bss                zero     0x200094ae      0x2  main.o [1]
+  .bss                zero     0x200094b0      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094b2      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094b4      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094b6      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094b8      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094ba      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094bc      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094be      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094c0      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094c2      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094c4      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094c6      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094c8      0x2  Safe_Check.o [1]
+  .bss                zero     0x200094ca      0x2  sdfatfs.o [1]
+  .bss                zero     0x200094cc      0x1  BNO055.o [1]
+  .bss                zero     0x200094cd      0x1  BNO055.o [1]
+  .bss                zero     0x200094ce      0x1  BNO055.o [1]
+  .bss                zero     0x200094cf      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d0      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d1      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d2      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d3      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d4      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d5      0x1  Calculate_Wave.o [1]
+  .bss                zero     0x200094d6      0x1  Communication.o [1]
+  .bss                zero     0x200094d7      0x1  ff.o [1]
+  .bss                zero     0x200094d8      0x1  GPS.o [1]
+  .bss                zero     0x200094d9      0x1  GPS.o [1]
+  .bss                zero     0x200094da      0x1  GPS.o [1]
+  .bss                zero     0x200094db      0x1  main.o [1]
+  .bss                zero     0x200094dc      0x1  Safe_Check.o [1]
+  .bss                zero     0x200094dd      0x1  Safe_Check.o [1]
+  .bss                zero     0x200094de      0x1  sdfatfs.o [1]
+  .bss                zero     0x200094df      0x1  sdfatfs.o [1]
+  .bss                zero     0x200094e0      0x1  sdfatfs.o [1]
+  .bss                zero     0x200094e1      0x1  sdfatfs.o [1]
+  .bss                zero     0x200094e2      0x1  sdio_sdcard.o [1]
+  .bss                zero     0x200094e3      0x1  sdio_sdcard.o [1]
+  .bss                zero     0x200094e4      0x1  sdio_sdcard.o [1]
+  .bss                zero     0x200094e5      0x1  sdio_sdcard.o [1]
+  .bss                zero     0x200094e6      0x1  Senser_calibration.o [1]
+  .bss                zero     0x200094e7      0x1  Senser_calibration.o [1]
+  .bss                zero     0x200094e8      0x1  Senser_calibration.o [1]
+  .bss                zero     0x200094e9      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094ea      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094eb      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094ec      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094ed      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094ee      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094ef      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f0      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f1      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f2      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f3      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f4      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f5      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f6      0x1  stm32f4xx_it.o [1]
+  .bss                zero     0x200094f7      0x1  stm32f4xx_it.o [1]
+                             - 0x200094f8   0x942c
+
+"P2", part 3 of 3:                          0x3208
+  .noinit             uninit   0x200094f8    0x200  sdio_sdcard.o [1]
+  .noinit             uninit   0x200096f8      0x4  sdio_sdcard.o [1]
+  CSTACK                       0x20009700   0x3000  <Block>
+    CSTACK            uninit   0x20009700   0x3000  <Block tail>
+                             - 0x2000c700   0x3208
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address     Size
+          -------     ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x942c:
+          0x200000cc  0x942c
+
+Copy (__iar_copy_init3)
+    1 source range, total size 0xcc (100% of destination):
+          0x0801b1d0    0xcc
+    1 destination range, total size 0xca:
+          0x20000000    0xca
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                      ro code  ro data  rw data
+    ------                      -------  -------  -------
+C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj: [1]
+    BNO055.o                      1 428        8      329
+    Calculate_Wave.o              5 714       12   21 351
+    Communication.o               6 458       28      219
+    Communication_OriData.o         560                32
+    GPS.o                         1 988        4      279
+    ICM2060x.o                      720       33        1
+    IMU_Update.o                  1 544       61      232
+    Library_Filter.o                304
+    Master_i2c.o                    976
+    RX8010.o                      1 660        4       48
+    Safe_Check.o                  2 968        4      104
+    Senser_calibration.o          1 328                27
+    SysTick.o                       168
+    diskio.o                        336
+    eeprom.o                        532                80
+    ff.o                          8 872      268       87
+    filter.o                      1 100       88    1 132
+    main.o                        1 584                35
+    malloc.o                        372       32   10 900
+    misc.o                          132
+    ringbuffer.o                    132
+    sdfatfs.o                     3 488      532    2 942
+    sdio_sdcard.o                 8 804        1      713
+    startup_stm32f40xx.o            712
+    stm32f4xx_dma.o                 664
+    stm32f4xx_flash.o               568
+    stm32f4xx_gpio.o                288
+    stm32f4xx_it.o                  580                15
+    stm32f4xx_rcc.o                 432       16       16
+    stm32f4xx_sdio.o                212
+    stm32f4xx_tim.o                 250
+    stm32f4xx_usart.o               716
+    sys.o                            16
+    system_stm32f4xx.o              340
+    time_init.o                     116
+    uart_init.o                   1 824               100
+    unicode.o                       140    1 216
+    -----------------------------------------------------
+    Total:                       58 026    2 307   38 642
+
+command line: [2]
+    -----------------------------------------------------
+    Total:
+
+dl7M_tln.a: [3]
+    atoi.o                            8
+    div.o                            14
+    errno.o                          12        4        4
+    exit.o                            4
+    low_level_init.o                  4
+    memcpy.o                         12
+    memset.o                         20
+    qsort.o                       1 310
+    sprintf.o                        52
+    strcat.o                         28
+    strstr.o                         44
+    xprintffull.o                 3 462
+    xsprout.o                        10
+    xstoflt.o                       436
+    xstopfx.o                       304
+    xstoul.o                        412
+    xstoxflt.o                      512
+    xtls.o                            2
+    -----------------------------------------------------
+    Total:                        6 646        4        4
+
+iar_cortexM4lf_math.a: [4]
+    arm_bitreversal.o               168
+    arm_cfft_radix4_f32.o         1 784
+    arm_cfft_radix4_init_f32.o      176
+    arm_common_tables.o                   34 816
+    -----------------------------------------------------
+    Total:                        2 128   34 816
+
+m7M_tlv.a: [5]
+    DblAdd.o                        232
+    DblCmpEq.o                       32
+    DblCmpGe.o                       46
+    DblCmpLe.o                       46
+    DblDiv.o                        582
+    DblMul.o                        418
+    DblSub.o                        384
+    DblToFlt.o                      144
+    DblToI32.o                       88
+    FltToDbl.o                       78
+    I32ToDbl.o                       48
+    atan.o                          192
+    atan2.o                         244
+    atof.o                           16
+    cosf.o                            6
+    fmodf.o                         316
+    fpinit_M.o                       26
+    round.o                          76
+    sinf.o                            6
+    sqrt.o                          256
+    tanf.o                          352
+    xatan.o                         496
+    xdint.o                         126
+    xdnorm.o                         66
+    xdscale.o                       276
+    xdtento.o                       512
+    xdtest.o                         64
+    xdunscal.o                       86
+    xfdint.o                         80
+    xfquad.o                        236
+    xfsin.o                         364
+    xstod.o                         360
+    -----------------------------------------------------
+    Total:                        6 254
+
+rt7M_tl.a: [6]
+    ABImemcpy_unaligned.o           118
+    ABImemmove_unaligned.o          120
+    ABImemset.o                     102
+    I64DivMod.o                     306
+    I64DivZer.o                       2
+    cexit.o                          10
+    cmain.o                          26
+    copy_init3.o                     46
+    cstartup_M.o                     12
+    data_init.o                      40
+    iarEdom.o                        12
+    memchr.o                         88
+    strchr.o                         22
+    strlen.o                         54
+    zero_init3.o                     34
+    -----------------------------------------------------
+    Total:                          992
+
+shb_l.a: [7]
+    exit.o                           20
+    -----------------------------------------------------
+    Total:                           20
+
+    Gaps                             29                 4
+    Linker created                            38   12 288
+---------------------------------------------------------
+    Grand Total:                 74 095   37 165   50 938
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                      Address    Size  Type      Object
+-----                      -------    ----  ----      ------
+?main                   0x0801ae89          Code  Gb  cmain.o [6]
+APBAHBPrescTable        0x20000034    0x10  Data  Lc  stm32f4xx_rcc.o [1]
+Acc2_a2                 0x200000a4     0x4  Data  Gb  filter.o [1]
+Acc2_a3                 0x200000a8     0x4  Data  Gb  filter.o [1]
+Acc2_b1                 0x20000098     0x4  Data  Gb  filter.o [1]
+Acc2_b2                 0x2000009c     0x4  Data  Gb  filter.o [1]
+Acc2_b3                 0x200000a0     0x4  Data  Gb  filter.o [1]
+Add_Ending_Message      0x0801099d    0xd0  Code  Gb  sdfatfs.o [1]
+Add_LocalFile           0x080105e1   0x20e  Code  Gb  sdfatfs.o [1]
+Angle_fuse_pitch        0x08019395   0x276  Code  Gb  IMU_Update.o [1]
+Angle_fuse_roll         0x08019085   0x310  Code  Gb  IMU_Update.o [1]
+BCDToHex                0x08016f33    0x3a  Code  Gb  RX8010.o [1]
+BNO055_Decode           0x0801827d   0x24c  Code  Gb  BNO055.o [1]
+BNO055_Init             0x08018013    0xee  Code  Gb  BNO055.o [1]
+BNO055_IsReadyToRead    0x08018175    0x18  Code  Gb  BNO055.o [1]
+BNO055_RX_BUF           0x200092a0    0x14  Data  Gb  BNO055.o [1]
+BNO055_RX_RingBuff      0x200092b4    0x14  Data  Gb  BNO055.o [1]
+BNO055_RX_WorkingBuff   0x20008c3c    0x64  Data  Gb  BNO055.o [1]
+BNO055_Reg_Check1       0x08018101    0x74  Code  Gb  BNO055.o [1]
+BNO055_UARTDMAWriteData
+                        0x0800f53f    0x9c  Code  Gb  uart_init.o [1]
+BNO055_Update           0x0801818d    0xf0  Code  Gb  BNO055.o [1]
+BNO055_maxx             0x20009490     0x4  Data  Gb  Senser_calibration.o [1]
+BNO055_maxy             0x20009494     0x4  Data  Gb  Senser_calibration.o [1]
+BNO055_maxz             0x20009498     0x4  Data  Gb  Senser_calibration.o [1]
+BNO055_minx             0x2000949c     0x4  Data  Gb  Senser_calibration.o [1]
+BNO055_miny             0x200094a0     0x4  Data  Gb  Senser_calibration.o [1]
+BNO055_minz             0x200094a4     0x4  Data  Gb  Senser_calibration.o [1]
+BNO_Acc_Health_Check    0x0801652b   0x226  Code  Gb  Safe_Check.o [1]
+BNO_Configure           0x08018001    0x12  Code  Gb  BNO055.o [1]
+BNO_TxData              0x200092c8    0x14  Data  Gb  BNO055.o [1]
+BNOacc_Healthstate      0x200000c6     0x1  Data  Gb  Safe_Check.o [1]
+BNOdata_filter_Acc      0x08018ba1    0x94  Code  Gb  filter.o [1]
+BNOdata_filter_Gyro     0x08018c35    0x94  Code  Gb  filter.o [1]
+BusFault_Handler        0x0801a55f     0x2  Code  Gb  stm32f4xx_it.o [1]
+CFI_keywords            0x0801ac5c    0xa0  Data  Gb  sdfatfs.o [1]
+CID_Tab                 0x200093a8    0x10  Data  Lc  sdio_sdcard.o [1]
+CSD_Tab                 0x20009398    0x10  Data  Lc  sdio_sdcard.o [1]
+CSTACK$$Base            0x20009700           --   Gb  - Linker created -
+CSTACK$$Limit           0x2000c700           --   Gb  - Linker created -
+C_0                     0x0800f3fe     0x1  Data  Gb  IMU_Update.o [1]
+Cali_parameter_caculation_XY
+                        0x0801990b    0x5e  Code  Gb  Senser_calibration.o [1]
+Cali_parameter_caculation_Z
+                        0x08019a53    0x30  Code  Gb  Senser_calibration.o [1]
+CardType                0x200094e2     0x1  Data  Lc  sdio_sdcard.o [1]
+Choose_Package_Data1    0x0800e3af    0x8e  Code  Gb  Communication.o [1]
+Choose_Package_Data10   0x0800edcd   0x19e  Code  Gb  Communication.o [1]
+Choose_Package_Data2    0x0800e43d    0x8e  Code  Gb  Communication.o [1]
+Choose_Package_Data3    0x0800e4cb   0x190  Code  Gb  Communication.o [1]
+Choose_Package_Data4    0x0800e65b   0x1b6  Code  Gb  Communication.o [1]
+Choose_Package_Data5    0x0800e825   0x29c  Code  Gb  Communication.o [1]
+Choose_Package_Data7    0x0800eac1   0x180  Code  Gb  Communication.o [1]
+Choose_Package_Data8    0x0800ec49   0x184  Code  Gb  Communication.o [1]
+Choose_Package_OriData  0x08017def   0x202  Code  Gb  Communication_OriData.o [1]
+Choose_Package_RealTime_Data
+                        0x0800ef75   0x1ac  Code  Gb  Communication.o [1]
+Chose_BNO_ReadData      0x0801856d    0x28  Code  Gb  BNO055.o [1]
+Chose_BNO_WriteData     0x0801853d    0x30  Code  Gb  BNO055.o [1]
+CmdError                0x0800c931    0x30  Code  Gb  sdio_sdcard.o [1]
+CmdResp1Error           0x0800c9a5    0x5c  Code  Gb  sdio_sdcard.o [1]
+CmdResp2Error           0x0800ca2f    0x52  Code  Gb  sdio_sdcard.o [1]
+CmdResp3Error           0x0800ca01    0x2e  Code  Gb  sdio_sdcard.o [1]
+CmdResp6Error           0x0800ca81    0x88  Code  Gb  sdio_sdcard.o [1]
+CmdResp7Error           0x0800c961    0x44  Code  Gb  sdio_sdcard.o [1]
+Communicate_OriData_TxData
+                        0x2000903c    0x20  Data  Gb  Communication_OriData.o [1]
+Communicate_TxData      0x20008f54    0x34  Data  Gb  Communication.o [1]
+Communication_232_Configure
+                        0x0800dac5    0x16  Code  Gb  Communication.o [1]
+Communication_DataDecode
+                        0x0800ddcf    0xba  Code  Gb  Communication.o [1]
+Communication_IsReadyToRead
+                        0x0800dadb    0x18  Code  Gb  Communication.o [1]
+Communication_OriData_Configure
+                        0x08017dd1     0x8  Code  Gb  Communication_OriData.o [1]
+Communication_OriData_Send
+                        0x0800fa45    0x90  Code  Gb  uart_init.o [1]
+Communication_Send      0x0800f723    0x9a  Code  Gb  uart_init.o [1]
+Communication_Update    0x0800daf3   0x2dc  Code  Gb  Communication.o [1]
+Config                  0x20008eb0    0x3c  Data  Gb  eeprom.o [1]
+Creat_Log_File          0x08010a85    0xae  Code  Gb  sdfatfs.o [1]
+CurrVol                 0x200094d7     0x1  Data  Lc  ff.o [1]
+DMA_ClearFlag           0x0800d987    0x20  Code  Gb  stm32f4xx_dma.o [1]
+DMA_Cmd                 0x0800d909    0x1a  Code  Gb  stm32f4xx_dma.o [1]
+DMA_DeInit              0x0800d77d   0x136  Code  Gb  stm32f4xx_dma.o [1]
+DMA_FlowControllerConfig
+                        0x0800d923    0x18  Code  Gb  stm32f4xx_dma.o [1]
+DMA_GetCmdStatus        0x0800d941    0x14  Code  Gb  stm32f4xx_dma.o [1]
+DMA_GetCurrDataCounter  0x0800d93b     0x6  Code  Gb  stm32f4xx_dma.o [1]
+DMA_GetFlagStatus       0x0800d955    0x32  Code  Gb  stm32f4xx_dma.o [1]
+DMA_Init                0x0800d8b3    0x56  Code  Gb  stm32f4xx_dma.o [1]
+Data_Transmit_232       0x0800e251   0x15e  Code  Gb  Communication.o [1]
+DebugMon_Handler        0x0801a563     0x2  Code  Gb  stm32f4xx_it.o [1]
+DeviceMode              0x200000c9     0x1  Data  Lc  sdio_sdcard.o [1]
+Device_Inf              0x200093e8     0xc  Data  Gb  sdfatfs.o [1]
+Device_Information      0x20009318    0x14  Data  Gb  eeprom.o [1]
+EEPROM_Loading_Config   0x08018595    0x78  Code  Gb  eeprom.o [1]
+EEPROM_Loading_DeviceInformation
+                        0x080186b3    0x60  Code  Gb  eeprom.o [1]
+EEPROM_Write_Config     0x0801860d    0x5a  Code  Gb  eeprom.o [1]
+EEPROM_Write_DeviceInformation
+                        0x08018667    0x4c  Code  Gb  eeprom.o [1]
+EEPROM_Write_DeviceInformation_Init
+                        0x08018713    0x7e  Code  Gb  eeprom.o [1]
+Ex                      0x2000943c     0x4  Data  Lc  IMU_Update.o [1]
+ExCvt                   0x0801acfc    0x80  Data  Lc  ff.o [1]
+Ey                      0x20009458     0x4  Data  Lc  IMU_Update.o [1]
+FFT_Cal                 0x080139c9   0x170  Code  Gb  Calculate_Wave.o [1]
+FFT_init                0x0801383d   0x186  Code  Gb  Calculate_Wave.o [1]
+FLASH_ClearFlag         0x08019e65     0x6  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_DataCacheCmd      0x08019cb9    0x2a  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_EraseSector       0x08019d15    0xb0  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_GetStatus         0x08019e6b    0x46  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_Lock              0x08019d03    0x12  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_ProgramByte       0x08019e17    0x4e  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_ProgramHalfWord   0x08019dc5    0x52  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_Unlock            0x08019ce3    0x20  Code  Gb  stm32f4xx_flash.o [1]
+FLASH_WaitForLastOperation
+                        0x08019ec9    0x28  Code  Gb  stm32f4xx_flash.o [1]
+FatFs                   0x20009018    0x24  Data  Lc  ff.o [1]
+Files                   0x20008fbc    0x30  Data  Lc  ff.o [1]
+FindSCR                 0x0800cc91   0x1c8  Code  Gb  sdio_sdcard.o [1]
+Float2String_Buf        0x0800f2d9    0x8e  Code  Gb  Communication.o [1]
+Float2String_CharBuf    0x0800f389    0x76  Code  Gb  Communication.o [1]
+Fsid                    0x200094ac     0x2  Data  Lc  ff.o [1]
+GPIO_Init               0x0800d4f5    0xa6  Code  Gb  stm32f4xx_gpio.o [1]
+GPIO_PinAFConfig        0x0800d5c3    0x52  Code  Gb  stm32f4xx_gpio.o [1]
+GPIO_ReadInputDataBit   0x0800d59b    0x16  Code  Gb  stm32f4xx_gpio.o [1]
+GPIO_ResetBits          0x0800d5b5     0x4  Code  Gb  stm32f4xx_gpio.o [1]
+GPIO_SetBits            0x0800d5b1     0x4  Code  Gb  stm32f4xx_gpio.o [1]
+GPIO_ToggleBits         0x0800d5b9     0xa  Code  Gb  stm32f4xx_gpio.o [1]
+GPS_Configure           0x0800fbb9    0x16  Code  Gb  GPS.o [1]
+GPS_DataDecode_GPGGA    0x0800fdb1    0xcc  Code  Gb  GPS.o [1]
+GPS_DataDecode_GPRMC    0x0800fe7d   0x1be  Code  Gb  GPS.o [1]
+GPS_Data_Package        0x200094d9     0x1  Data  Gb  GPS.o [1]
+GPS_IsReadyToRead       0x0800fbcf    0x18  Code  Gb  GPS.o [1]
+GPS_Update              0x0800fbe7   0x1ca  Code  Gb  GPS.o [1]
+Get_Acc_Cycle           0x0801371d    0x4a  Code  Gb  Calculate_Wave.o [1]
+Get_Config_Data         0x080103d5    0x7e  Code  Gb  sdfatfs.o [1]
+Get_Cycle_Height        0x08013fa9   0x38c  Code  Gb  Calculate_Wave.o [1]
+Get_Num_Length          0x0800f1a5    0x1a  Code  Gb  Communication.o [1]
+Get_Routine_Data        0x08014381   0x49c  Code  Gb  Calculate_Wave.o [1]
+Gps_Data                0x20008f88    0x34  Data  Gb  GPS.o [1]
+Gps_cnt                 0x200094da     0x1  Data  Gb  GPS.o [1]
+Gyro_Health_Check       0x08016977   0x18a  Code  Gb  Safe_Check.o [1]
+HEX2BCD                 0x08016f6d    0x32  Code  Gb  RX8010.o [1]
+HMS_To_Second           0x08014c69    0x52  Code  Gb  Calculate_Wave.o [1]
+HardFault_Handler       0x0801a55b     0x2  Code  Gb  stm32f4xx_it.o [1]
+Host_Cmd                0x200092f0    0x14  Data  Gb  Communication.o [1]
+I2C_Ack                 0x0801a035    0x4a  Code  Gb  Master_i2c.o [1]
+I2C_Init_IO             0x08019ef1    0x6e  Code  Gb  Master_i2c.o [1]
+I2C_NoAck               0x0801a07f    0x4a  Code  Gb  Master_i2c.o [1]
+I2C_ReadByte            0x0801a133    0x60  Code  Gb  Master_i2c.o [1]
+I2C_SendByte            0x0801a0c9    0x6a  Code  Gb  Master_i2c.o [1]
+I2C_Start               0x08019f5f    0x44  Code  Gb  Master_i2c.o [1]
+I2C_Stop                0x08019fa3    0x3a  Code  Gb  Master_i2c.o [1]
+I2C_WaitAck             0x08019fdd    0x58  Code  Gb  Master_i2c.o [1]
+ICM2060x_ACC_Config     0x0801880d    0x44  Code  Lc  ICM2060x.o [1]
+ICM2060x_CHIP_Init      0x080187e9    0x24  Code  Lc  ICM2060x.o [1]
+ICM2060x_GYRO_Config    0x08018851    0x4a  Code  Lc  ICM2060x.o [1]
+ICM2060x_GetACC         0x0801889b    0xe8  Code  Gb  ICM2060x.o [1]
+ICM2060x_GetGYRO        0x08018983    0xb6  Code  Gb  ICM2060x.o [1]
+ICM2060x_Init           0x080187a9    0x40  Code  Gb  ICM2060x.o [1]
+ICM_Acc_Health_Check    0x08016751   0x226  Code  Gb  Safe_Check.o [1]
+ICMacc_Healthstate      0x200000c7     0x1  Data  Gb  Safe_Check.o [1]
+ICMdata_filter_Acc      0x08018a79    0x94  Code  Gb  filter.o [1]
+ICMdata_filter_Gyro     0x08018b0d    0x94  Code  Gb  filter.o [1]
+ID_buffer               0x200094ca     0x2  Data  Gb  sdfatfs.o [1]
+IIC_ReadByte            0x08017133    0x74  Code  Gb  RX8010.o [1]
+IIC_SendByte            0x080170c5    0x6e  Code  Gb  RX8010.o [1]
+IIC_Start               0x08016f9f    0x58  Code  Gb  RX8010.o [1]
+IIC_Stop                0x08016ff7    0x64  Code  Gb  RX8010.o [1]
+IIC_Wait_Ack            0x0801705b    0x6a  Code  Gb  RX8010.o [1]
+IMU_DataAD              0x2000928c    0x14  Data  Gb  BNO055.o [1]
+INTX_DISABLE            0x0800d76d     0x6  Code  Gb  sys.o [1]
+INTX_ENABLE             0x0800d775     0x6  Code  Gb  sys.o [1]
+IsCardProgramming       0x0800cbdb    0xb0  Code  Gb  sdio_sdcard.o [1]
+IsSenser_Ready          0x08016331    0x60  Code  Gb  Safe_Check.o [1]
+Is_Reaching_IntervalTime
+                        0x08014b7f    0x2e  Code  Gb  Calculate_Wave.o [1]
+Kx_0                    0x20009440     0x4  Data  Lc  IMU_Update.o [1]
+Kx_1                    0x20009444     0x4  Data  Lc  IMU_Update.o [1]
+Ky_0                    0x2000945c     0x4  Data  Lc  IMU_Update.o [1]
+Ky_1                    0x20009460     0x4  Data  Lc  IMU_Update.o [1]
+Lat_File                0x200093f4     0xc  Data  Gb  sdfatfs.o [1]
+Leap_Year               0x08014d19    0x36  Code  Gb  Calculate_Wave.o [1]
+Level1_Filter_Ax        0x200090bc    0x20  Data  Gb  filter.o [1]
+Level1_Filter_Ay        0x200090dc    0x20  Data  Gb  filter.o [1]
+Level1_Filter_Az        0x200090fc    0x20  Data  Gb  filter.o [1]
+Level1_Filter_Gx        0x2000905c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_Gy        0x2000907c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_Gz        0x2000909c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_ax        0x2000917c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_ay        0x2000919c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_az        0x200091bc    0x20  Data  Gb  filter.o [1]
+Level1_Filter_gx        0x2000911c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_gy        0x2000913c    0x20  Data  Gb  filter.o [1]
+Level1_Filter_gz        0x2000915c    0x20  Data  Gb  filter.o [1]
+LfnOfs                  0x0801af24    0x10  Data  Lc  ff.o [1]
+Log_time                0x2000923c    0x20  Data  Gb  sdfatfs.o [1]
+Lon_File                0x20009400     0xc  Data  Gb  sdfatfs.o [1]
+Mag_Calibration_Operation
+                        0x0801968d    0x8a  Code  Gb  Senser_calibration.o [1]
+Mag_Calibration_Step    0x200094e6     0x1  Data  Gb  Senser_calibration.o [1]
+Mag_Calibration_Step_Update
+                        0x08019717    0xc4  Code  Gb  Senser_calibration.o [1]
+Mag_Health_Check        0x08016391   0x19a  Code  Gb  Safe_Check.o [1]
+Mag_calibration_init    0x080197db     0xc  Code  Gb  Senser_calibration.o [1]
+Mag_calibration_init_XY
+                        0x080197e7    0x2a  Code  Gb  Senser_calibration.o [1]
+Mag_calibration_init_Z  0x08019811    0x16  Code  Gb  Senser_calibration.o [1]
+Mag_calibration_offset  0x08019aff    0x6c  Code  Gb  Senser_calibration.o [1]
+MemManage_Handler       0x0801a55d     0x2  Code  Gb  stm32f4xx_it.o [1]
+NMEA0183_Check_Sum      0x0800f149    0x56  Code  Gb  Communication.o [1]
+NMEA_Comma_Pos          0x08010045    0x2c  Code  Gb  GPS.o [1]
+NMEA_Pow                0x08010071    0x16  Code  Gb  GPS.o [1]
+NMEA_Str2num            0x08010087    0xf6  Code  Gb  GPS.o [1]
+NMI_Handler             0x0801a559     0x2  Code  Gb  stm32f4xx_it.o [1]
+NVIC_Init               0x0800d61f    0x64  Code  Gb  misc.o [1]
+NVIC_PriorityGroupConfig
+                        0x0800d615     0xa  Code  Gb  misc.o [1]
+NVIC_SetPriority        0x08017531    0x22  Code  Lc  SysTick.o [1]
+NVIC_SystemReset        0x080175d9    0x20  Code  Lc  main.o [1]
+OriData_AutoClose_Enable
+                        0x08017b21    0x5c  Code  Gb  main.o [1]
+OriData__Communication_Send
+                        0x08017dd9    0x16  Code  Gb  Communication_OriData.o [1]
+Parmeters_Decode        0x080104cb   0x10c  Code  Gb  sdfatfs.o [1]
+Parmeters_DecodeID      0x0801047f    0x4c  Code  Gb  sdfatfs.o [1]
+PendSV_Handler          0x0801a567     0x2  Code  Gb  stm32f4xx_it.o [1]
+Px_0                    0x20009434     0x4  Data  Lc  IMU_Update.o [1]
+Px_1                    0x20009438     0x4  Data  Lc  IMU_Update.o [1]
+Pxdot                   0x20009378    0x10  Data  Lc  IMU_Update.o [1]
+Py_0                    0x20009450     0x4  Data  Lc  IMU_Update.o [1]
+Py_1                    0x20009454     0x4  Data  Lc  IMU_Update.o [1]
+Pydot                   0x20009388    0x10  Data  Lc  IMU_Update.o [1]
+Q_anglex                0x0801b07c     0x4  Data  Gb  IMU_Update.o [1]
+Q_angley                0x0801b080     0x4  Data  Gb  IMU_Update.o [1]
+Q_gyro                  0x0801b084     0x4  Data  Gb  IMU_Update.o [1]
+RCA                     0x2000948c     0x4  Data  Lc  sdio_sdcard.o [1]
+RCC_AHB1PeriphClockCmd  0x0800d42b    0x20  Code  Gb  stm32f4xx_rcc.o [1]
+RCC_APB1PeriphClockCmd  0x0800d44b    0x20  Code  Gb  stm32f4xx_rcc.o [1]
+RCC_APB1PeriphResetCmd  0x0800d48b    0x20  Code  Gb  stm32f4xx_rcc.o [1]
+RCC_APB2PeriphClockCmd  0x0800d46b    0x20  Code  Gb  stm32f4xx_rcc.o [1]
+RCC_APB2PeriphResetCmd  0x0800d4ab    0x20  Code  Gb  stm32f4xx_rcc.o [1]
+RCC_GetClocksFreq       0x0800d345    0xe6  Code  Gb  stm32f4xx_rcc.o [1]
+RS8010sj_Init           0x08016eb5    0x16  Code  Gb  RX8010.o [1]
+RS8010sj_Init_IO        0x08016ecb    0x68  Code  Gb  RX8010.o [1]
+RTC_Time                0x20008fec    0x2c  Data  Gb  RX8010.o [1]
+RTC_Time_Adj            0x08017413   0x10c  Code  Gb  RX8010.o [1]
+RX8010_Init             0x0801726b    0xe4  Code  Gb  RX8010.o [1]
+RX_WorkingBuff_Count    0x200094cc     0x1  Data  Gb  BNO055.o [1]
+R_anglex                0x0801b088     0x4  Data  Gb  IMU_Update.o [1]
+R_angley                0x0801b08c     0x4  Data  Gb  IMU_Update.o [1]
+Read_CfgFile            0x0801037d    0x58  Code  Gb  sdfatfs.o [1]
+Read_Constant_Time      0x080171a7    0x66  Code  Gb  RX8010.o [1]
+Read_RTC_Time           0x0801734f    0x58  Code  Gb  RX8010.o [1]
+Record_Data             0x080107f9   0x1a0  Code  Gb  sdfatfs.o [1]
+Record_Log_Data         0x08010b61   0x4e0  Code  Gb  sdfatfs.o [1]
+Recorder_Config         0x08017a55    0x16  Code  Lc  main.o [1]
+Region$$Table$$Base     0x0801adec           --   Gb  - Linker created -
+Region$$Table$$Limit    0x0801ae10           --   Gb  - Linker created -
+Routine                 0x200091fc    0x20  Data  Gb  sdfatfs.o [1]
+S0_write_reg_succeed    0x200000c4     0x1  Data  Gb  ICM2060x.o [1]
+SDCardInfo              0x20008dd0    0x58  Data  Gb  sdio_sdcard.o [1]
+SDEnWideBus             0x0800cb0d    0xce  Code  Gb  sdio_sdcard.o [1]
+SDIO_ClearFlag          0x0800d73f     0x6  Code  Gb  stm32f4xx_sdio.o [1]
+SDIO_Clock_Set          0x0800afb3    0x16  Code  Gb  sdio_sdcard.o [1]
+SDIO_CmdInitStructure   0x20009354    0x14  Data  Gb  sdio_sdcard.o [1]
+SDIO_DATA_BUFFER        0x200094f8   0x200  Data  Gb  sdio_sdcard.o [1]
+SDIO_DataConfig         0x0800d6fb    0x2e  Code  Gb  stm32f4xx_sdio.o [1]
+SDIO_DataInitStructure  0x20009274    0x18  Data  Gb  sdio_sdcard.o [1]
+SDIO_GetFlagStatus      0x0800d729    0x16  Code  Gb  stm32f4xx_sdio.o [1]
+SDIO_GetPowerState      0x0800d6c9     0xa  Code  Gb  stm32f4xx_sdio.o [1]
+SDIO_IRQHandler         0x0800c7a9     0x8  Code  Gb  sdio_sdcard.o [1]
+SDIO_Init               0x0800d699    0x2a  Code  Gb  stm32f4xx_sdio.o [1]
+SDIO_InitStructure      0x2000925c    0x18  Data  Gb  sdio_sdcard.o [1]
+SDIO_Register_Deinit    0x0800ae0d    0x4c  Code  Gb  sdio_sdcard.o [1]
+SDIO_SendCommand        0x0800d6d3    0x28  Code  Gb  stm32f4xx_sdio.o [1]
+SDIO_SetPowerState      0x0800d6c3     0x6  Code  Gb  stm32f4xx_sdio.o [1]
+SD_DMA_Config           0x0800ce6f    0x7a  Code  Gb  sdio_sdcard.o [1]
+SD_EnableWideBusOperation
+                        0x0800b763    0x70  Code  Gb  sdio_sdcard.o [1]
+SD_GetCardInfo          0x0800b3cf   0x394  Code  Gb  sdio_sdcard.o [1]
+SD_Init                 0x0800ae59   0x15a  Code  Gb  sdio_sdcard.o [1]
+SD_InitializeCards      0x0800b1e3   0x1ec  Code  Gb  sdio_sdcard.o [1]
+SD_POWER_Control        0x08017a6b    0x3e  Code  Gb  main.o [1]
+SD_PowerON              0x0800afc9   0x21a  Code  Gb  sdio_sdcard.o [1]
+SD_ProcessIRQSrc        0x0800c7b1   0x180  Code  Gb  sdio_sdcard.o [1]
+SD_ReadBlock            0x0800b829   0x2c8  Code  Gb  sdio_sdcard.o [1]
+SD_ReadDisk             0x0800cee9    0xa6  Code  Gb  sdio_sdcard.o [1]
+SD_ReadMultiBlocks      0x0800bb31   0x39a  Code  Gb  sdio_sdcard.o [1]
+SD_SelectDeselect       0x0800b7ed    0x2e  Code  Gb  sdio_sdcard.o [1]
+SD_SetDeviceMode        0x0800b7d3    0x1a  Code  Gb  sdio_sdcard.o [1]
+SD_WriteBlock           0x0800bee9   0x414  Code  Gb  sdio_sdcard.o [1]
+SD_WriteDisk            0x0800cf95    0x9a  Code  Gb  sdio_sdcard.o [1]
+SD_WriteMultiBlocks     0x0800c321   0x474  Code  Gb  sdio_sdcard.o [1]
+SENSER_POWER_Control    0x08017aa9    0x3e  Code  Gb  main.o [1]
+SVC_Handler             0x0801a565     0x2  Code  Gb  stm32f4xx_it.o [1]
+Save_Cali_parameter     0x08019af1     0xe  Code  Gb  Senser_calibration.o [1]
+Senser_Data             0x20008924    0x84  Data  Gb  BNO055.o [1]
+Senser_Data_SelfCheck   0x0801631d    0x14  Code  Gb  Safe_Check.o [1]
+Senser_Data_filtered    0x20008ab0    0x84  Data  Gb  filter.o [1]
+Senser_Data_filtered_old
+                        0x20008b34    0x84  Data  Gb  filter.o [1]
+Senser_Data_filtered_pre_old
+                        0x20008bb8    0x84  Data  Gb  filter.o [1]
+Senser_Data_old         0x200089a8    0x84  Data  Gb  filter.o [1]
+Senser_Data_pre_old     0x20008a2c    0x84  Data  Gb  filter.o [1]
+Senser_data_process     0x08018ccd   0x102  Code  Gb  filter.o [1]
+Senserdata_filter_H     0x08018dd5    0x94  Code  Gb  filter.o [1]
+SetSysClock             0x08017c5b    0xce  Code  Lc  system_stm32f4xx.o [1]
+StopCondition           0x200094e3     0x1  Data  Lc  sdio_sdcard.o [1]
+SysTick_Config          0x08017553    0x2e  Code  Lc  SysTick.o [1]
+SysTick_Handler         0x0801a569     0x2  Code  Gb  stm32f4xx_it.o [1]
+SystemInit              0x08017c09    0x52  Code  Gb  system_stm32f4xx.o [1]
+System_Check            0x08016b01   0x32c  Code  Gb  Safe_Check.o [1]
+System_Status           0x08017b7d     0xc  Code  Gb  main.o [1]
+System_Status_Init      0x08017ae7    0x3a  Code  Gb  main.o [1]
+TIM3_IRQHandler         0x0801a56b    0xea  Code  Gb  stm32f4xx_it.o [1]
+TIM_ClearFlag           0x08019c79     0x8  Code  Gb  stm32f4xx_tim.o [1]
+TIM_ClearITPendingBit   0x08019caf     0x8  Code  Gb  stm32f4xx_tim.o [1]
+TIM_Cmd                 0x08019c27    0x1c  Code  Gb  stm32f4xx_tim.o [1]
+TIM_GetITStatus         0x08019c81    0x2e  Code  Gb  stm32f4xx_tim.o [1]
+TIM_ITConfig            0x08019c61    0x18  Code  Gb  stm32f4xx_tim.o [1]
+TIM_TimeBaseInit        0x08019bbd    0x6a  Code  Gb  stm32f4xx_tim.o [1]
+Tbl                     0x0801ab5c   0x100  Data  Lc  unicode.o [1]
+Time3_Count_100hz       0x200094f2     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Count_20hz        0x200094f3     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Count_2hz         0x200094f4     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Count_50hz        0x200094f0     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Count_5hz         0x200094ef     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Count_8hz         0x200094f1     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Count_SRF02       0x200094f5     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_100hz        0x200094ed     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_20hz         0x200094ec     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_2hz          0x200094ee     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_400hz        0x200094e9     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_50hz         0x200094ea     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_5hz          0x200094eb     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time3_Flag_SRF02        0x200094f6     0x1  Data  Gb  stm32f4xx_it.o [1]
+Time_Read_Run           0x080173a7    0x6c  Code  Gb  RX8010.o [1]
+Time_UTC2BJ             0x0801017d   0x1e0  Code  Gb  GPS.o [1]
+Time_init               0x08017d5d    0x70  Code  Gb  time_init.o [1]
+Tradion_Sample          0x08014a8d    0xf2  Code  Gb  Calculate_Wave.o [1]
+Tradion_Sample_Flinish  0x08014841   0x23a  Code  Gb  Calculate_Wave.o [1]
+TransferEnd             0x200094e5     0x1  Data  Gb  sdio_sdcard.o [1]
+TransferError           0x200094e4     0x1  Data  Gb  sdio_sdcard.o [1]
+Traverse_magvalue_XY    0x08019827    0xe4  Code  Gb  Senser_calibration.o [1]
+Traverse_magvalue_Z     0x080199e5    0x6e  Code  Gb  Senser_calibration.o [1]
+TxData                  0x20008d68    0x64  Data  Gb  uart_init.o [1]
+TxData_CheckSum_twoBytes
+                        0x0800f125    0x24  Code  Gb  Communication.o [1]
+UART4_IRQHandler        0x0801a655    0x38  Code  Gb  stm32f4xx_it.o [1]
+UART4_init              0x0800f401   0x13e  Code  Gb  uart_init.o [1]
+UART_Communication_OriData_init
+                        0x0800f8f1   0x154  Code  Gb  uart_init.o [1]
+UART_Communication_init
+                        0x0800f5db   0x148  Code  Gb  uart_init.o [1]
+UART_GPS_init           0x0800f7bd   0x134  Code  Gb  uart_init.o [1]
+USART1_IRQHandler       0x0801a705    0x3c  Code  Gb  stm32f4xx_it.o [1]
+USART2_IRQHandler       0x0801a68d    0x3c  Code  Gb  stm32f4xx_it.o [1]
+USART3_IRQHandler       0x0801a6c9    0x3c  Code  Gb  stm32f4xx_it.o [1]
+USART_ClearFlag         0x080115f5     0xc  Code  Gb  stm32f4xx_usart.o [1]
+USART_Cmd               0x0801154d    0x1c  Code  Gb  stm32f4xx_usart.o [1]
+USART_DMACmd            0x08011571    0x18  Code  Gb  stm32f4xx_usart.o [1]
+USART_DeInit            0x08011399    0xda  Code  Gb  stm32f4xx_usart.o [1]
+USART_GetFlagStatus     0x080115db    0x1a  Code  Gb  stm32f4xx_usart.o [1]
+USART_GetITStatus       0x08011601    0x64  Code  Gb  stm32f4xx_usart.o [1]
+USART_ITConfig          0x08011589    0x52  Code  Gb  stm32f4xx_usart.o [1]
+USART_Init              0x08011473    0xb6  Code  Gb  stm32f4xx_usart.o [1]
+USART_ReceiveData       0x08011569     0x8  Code  Gb  stm32f4xx_usart.o [1]
+UsageFault_Handler      0x0801a561     0x2  Code  Gb  stm32f4xx_it.o [1]
+Wave_Amplitude          0x20008604   0x190  Data  Gb  Calculate_Wave.o [1]
+Wave_Cycle              0x20008794   0x190  Data  Gb  Calculate_Wave.o [1]
+Wave_Data               0x20008e70    0x40  Data  Gb  IMU_Update.o [1]
+Wave_Height_Calculate   0x08013769    0xd4  Code  Gb  Calculate_Wave.o [1]
+Write_Constant_Time     0x0801720d    0x5e  Code  Gb  RX8010.o [1]
+YMD_To_Day              0x08014bad    0xb2  Code  Gb  Calculate_Wave.o [1]
+Yaw_Combine             0x08013b51   0x44a  Code  Gb  Calculate_Wave.o [1]
+_Decode_Compass_Cail    0x0800de89    0x2e  Code  Gb  Communication.o [1]
+_Decode_OriData_Record  0x0800e057    0xa0  Code  Gb  Communication.o [1]
+_Decode_RTD_CMD         0x0800e223    0x2e  Code  Gb  Communication.o [1]
+_Decode_Routine_CMD     0x0800e031    0x26  Code  Gb  Communication.o [1]
+_Decode_Scan_Mode       0x0800e125    0x48  Code  Gb  Communication.o [1]
+_Decode_Scan_Space      0x0800dfb7    0x7a  Code  Gb  Communication.o [1]
+_Decode_Senser_Restar   0x0800e0f7    0x2e  Code  Gb  Communication.o [1]
+_Decode_Time_Mode       0x0800deb7   0x100  Code  Gb  Communication.o [1]
+_Decode_Tradion_Sample  0x0800e16d    0xb6  Code  Gb  Communication.o [1]
+_GenldFull              0x08012561   0x262  Code  Lc  xprintffull.o [3]
+_LdtobFull              0x08012175   0x3e6  Code  Lc  xprintffull.o [3]
+_LitobFull              0x0801206d   0x106  Code  Lc  xprintffull.o [3]
+_PrintfFull             0x08011a85   0x5e2  Code  Gb  xprintffull.o [3]
+_PutcharsFull           0x080127c3    0x2e  Code  Lc  xprintffull.o [3]
+_SProut                 0x0800dabb     0xa  Code  Gb  xsprout.o [3]
+_Stoflt                 0x0801293d   0x1b4  Code  Gb  xstoflt.o [3]
+_Stopfx                 0x0801280b   0x130  Code  Gb  xstopfx.o [3]
+_Stoxflt                0x08012e09   0x1cc  Code  Gb  xstoxflt.o [3]
+__aeabi_cdcmpeq         0x08013685          Code  Gb  DblCmpEq.o [5]
+__aeabi_cdcmple         0x080131f9          Code  Gb  DblCmpLe.o [5]
+__aeabi_cdrcmple        0x08013229          Code  Gb  DblCmpGe.o [5]
+__aeabi_d2f             0x08011309          Code  Gb  DblToFlt.o [5]
+__aeabi_d2iz            0x08013259          Code  Gb  DblToI32.o [5]
+__aeabi_d2uiz           0x08013285          Code  Gb  DblToI32.o [5]
+__aeabi_dadd            0x08012b21          Code  Gb  DblAdd.o [5]
+__aeabi_ddiv            0x08013431          Code  Gb  DblDiv.o [5]
+__aeabi_dmul            0x08011165          Code  Gb  DblMul.o [5]
+__aeabi_dsub            0x080132b1          Code  Gb  DblSub.o [5]
+__aeabi_errno_addr      0x08013175     0x6  Code  Gb  errno.o [3]
+__aeabi_f2d             0x08011115          Code  Gb  FltToDbl.o [5]
+__aeabi_i2d             0x08012af1          Code  Gb  I32ToDbl.o [5]
+__aeabi_ldiv0           0x0800da21          Code  Gb  I64DivZer.o [6]
+__aeabi_ldivmod         0x0800d071          Code  Gb  I64DivMod.o [6]
+__aeabi_memset          0x08011665          Code  Gb  ABImemset.o [6]
+__aeabi_ui2d            0x08012b05          Code  Gb  I32ToDbl.o [5]
+__aeabi_uldivmod        0x0800d0b5          Code  Gb  I64DivMod.o [6]
+__cmain                 0x0801ae89          Code  Gb  cmain.o [6]
+__exit                  0x0801aeb9    0x14  Code  Gb  exit.o [7]
+__iar_Atan              0x08015e31   0x158  Code  Gb  xatan.o [5]
+__iar_Dint              0x08015cc9    0x7e  Code  Gb  xdint.o [5]
+__iar_Dnorm             0x080131b7    0x42  Code  Gb  xdnorm.o [5]
+__iar_Dscale            0x08013009   0x114  Code  Gb  xdscale.o [5]
+__iar_Dtentox           0x08012c65   0x13e  Code  Gb  xdtento.o [5]
+__iar_Dtest             0x08015def    0x30  Code  Gb  xdtest.o [5]
+__iar_Dunscale          0x080136a5    0x56  Code  Gb  xdunscal.o [5]
+__iar_Errno             0x200000c0     0x4  Data  Gb  errno.o [3]
+__iar_FDint             0x08016185    0x50  Code  Gb  xfdint.o [5]
+__iar_FQuad             0x08016099    0xc2  Code  Gb  xfquad.o [5]
+__iar_FSin              0x08015b5d   0x12a  Code  Gb  xfsin.o [5]
+__iar_Memchr            0x0801311d          Code  Gb  memchr.o [6]
+__iar_Memset            0x08011665          Code  Gb  ABImemset.o [6]
+__iar_Memset_word       0x0801166d          Code  Gb  ABImemset.o [6]
+__iar_Stod              0x080118e5     0x4  Code  Gb  xstod.o [5]
+__iar_Stodx             0x08011781   0x14e  Code  Gb  xstod.o [5]
+__iar_Stoul             0x08011a31     0x4  Code  Gb  xstoul.o [3]
+__iar_Stoulx            0x080118e9   0x142  Code  Gb  xstoul.o [3]
+__iar_Strchr            0x080116d5          Code  Gb  strchr.o [6]
+__iar_Strstr            0x08011755    0x2c  Code  Gb  strstr.o [3]
+__iar_copy_init3        0x0800d1a3    0x2e  Code  Gb  copy_init3.o [6]
+__iar_d2uiz             0x08013291          Code  Gb  DblToI32.o [5]
+__iar_dadd              0x08012b35          Code  Gb  DblAdd.o [5]
+__iar_data_init3        0x0801ad7d    0x28  Code  Gb  data_init.o [6]
+__iar_dlib_perthread_access
+                        0x080136fb     0x2  Code  Gb  xtls.o [3]
+__iar_dsub              0x080132c5          Code  Gb  DblSub.o [5]
+__iar_dsubStart         0x080132d7          Code  Gb  DblSub.o [5]
+__iar_edom              0x08016311          Code  Gb  iarEdom.o [6]
+__iar_init_vfp          0x0801ae6d          Code  Gb  fpinit_M.o [5]
+__iar_program_start     0x0801afd1          Code  Gb  cstartup_M.o [6]
+__iar_sqrt              0x08018ed5          Code  Gb  sqrt.o [5]
+__iar_ui2d              0x08012b09          Code  Gb  I32ToDbl.o [5]
+__iar_unaligned___aeabi_memcpy
+                        0x0800da45          Code  Gb  ABImemcpy_unaligned.o [6]
+__iar_unaligned___aeabi_memcpy4
+                        0x0800da65          Code  Gb  ABImemcpy_unaligned.o [6]
+__iar_unaligned___aeabi_memcpy8
+                        0x0800da65          Code  Gb  ABImemcpy_unaligned.o [6]
+__iar_unaligned___aeabi_memmove
+                        0x08016021          Code  Gb  ABImemmove_unaligned.o [6]
+__iar_unaligned___aeabi_memmove4
+                        0x08016021          Code  Gb  ABImemmove_unaligned.o [6]
+__iar_unaligned___aeabi_memmove8
+                        0x08016021          Code  Gb  ABImemmove_unaligned.o [6]
+__iar_vfp_atan          0x08019075    0x10  Code  Gb  atan.o [5]
+__iar_vfp_atan2         0x08015629    0x14  Code  Gb  atan2.o [5]
+__iar_vfp_atof          0x080116eb    0x10  Code  Gb  atof.o [5]
+__iar_vfp_fmodf         0x080161d5          Code  Gb  fmodf.o [5]
+__iar_vfp_round         0x08014d55    0x42  Code  Gb  round.o [5]
+__iar_vfp_sqrt          0x08018ec5          Code  Gb  sqrt.o [5]
+__iar_vfp_sqrtl         0x08018ec5          Code  Gb  sqrt.o [5]
+__iar_zero_init3        0x0800da23    0x22  Code  Gb  zero_init3.o [6]
+__low_level_init        0x0801aea3     0x4  Code  Gb  low_level_init.o [3]
+__vector_table          0x08000000          Data  Gb  startup_stm32f40xx.o [1]
+_call_main              0x0801ae95          Code  Gb  cmain.o [6]
+_exit                   0x0801aead          Code  Gb  cexit.o [6]
+_main                   0x0801ae9f          Code  Gb  cmain.o [6]
+a                       0x200048cc  0x2000  Data  Gb  Calculate_Wave.o [1]
+a                       0x08015fe0    0x40  Data  Lc  xatan.o [5]
+acc_cycle_i             0x200094cf     0x1  Data  Gb  Calculate_Wave.o [1]
+adjust_heap             0x080157a3    0x7a  Code  Lc  qsort.o [3]
+angle                   0x200093c4     0xc  Data  Lc  IMU_Update.o [1]
+angle_dot               0x200093d0     0xc  Data  Lc  IMU_Update.o [1]
+angle_dot_pitch         0x20009480     0x4  Data  Gb  main.o [1]
+angle_dot_roll          0x20009470     0x4  Data  Gb  main.o [1]
+angle_err               0x200093dc     0xc  Data  Lc  IMU_Update.o [1]
+angle_pitch             0x2000947c     0x4  Data  Gb  main.o [1]
+angle_roll              0x2000946c     0x4  Data  Gb  main.o [1]
+armBitRevTable          0x08000188   0x800  Data  Gb  arm_common_tables.o [4]
+arm_bitreversal_f32     0x08015d47    0xa8  Code  Gb  arm_bitreversal.o [4]
+arm_cfft_radix4_f32     0x08015507    0x42  Code  Gb  arm_cfft_radix4_f32.o [4]
+arm_cfft_radix4_init_f32
+                        0x08014da1    0xb0  Code  Gb  arm_cfft_radix4_init_f32.o [4]
+arm_radix4_butterfly_f32
+                        0x08014e51   0x34a  Code  Gb  arm_cfft_radix4_f32.o [4]
+arm_radix4_butterfly_inverse_f32
+                        0x0801519d   0x36a  Code  Gb  arm_cfft_radix4_f32.o [4]
+atan                    0x08018fc5    0x9a  Code  Gb  atan.o [5]
+atan2                   0x08015549    0xd0  Code  Gb  atan2.o [5]
+atoi                    0x080116fb     0x8  Code  Gb  atoi.o [3]
+bno_acc_abnormal_count  0x200094b8     0x2  Data  Gb  Safe_Check.o [1]
+bno_acc_disconnect_count
+                        0x200094ba     0x2  Data  Gb  Safe_Check.o [1]
+bno_acc_normal_count    0x200094b6     0x2  Data  Gb  Safe_Check.o [1]
+c                       0x200094aa     0x2  Data  Gb  Communication.o [1]
+cal_iir_coeff           0x0801a2c1    0xca  Code  Gb  Library_Filter.o [1]
+check_fs                0x08009b1f    0x7a  Code  Lc  ff.o [1]
+chk_chr                 0x080089cd    0x14  Code  Lc  ff.o [1]
+chk_lock                0x080089e1    0x8e  Code  Lc  ff.o [1]
+clear_lock              0x08008bc5    0x2e  Code  Lc  ff.o [1]
+clmt_clust              0x080090c5    0x2a  Code  Lc  ff.o [1]
+clust2sect              0x08008d59    0x18  Code  Gb  ff.o [1]
+cmp_lfn                 0x08009341    0x96  Code  Lc  ff.o [1]
+cnt_5hz                 0x200094ae     0x2  Data  Gb  main.o [1]
+compare                 0x080136fd    0x20  Code  Gb  Calculate_Wave.o [1]
+config_step             0x2000940c     0x4  Data  Gb  BNO055.o [1]
+convert_from_bytes_to_power_of_two
+                        0x0800ce59    0x16  Code  Gb  sdio_sdcard.o [1]
+corr_flag               0x200094ce     0x1  Data  Lc  BNO055.o [1]
+cosf                    0x0801a551     0x6  Code  Gb  cosf.o [5]
+create_chain            0x08009007    0xbe  Code  Lc  ff.o [1]
+create_name             0x0800974f   0x2a0  Code  Lc  ff.o [1]
+current_heading_i       0x200094d2     0x1  Data  Gb  Calculate_Wave.o [1]
+current_vel_heading     0x20009418     0x4  Data  Gb  Calculate_Wave.o [1]
+data_BNO055             0x200094f7     0x1  Data  Gb  stm32f4xx_it.o [1]
+dec_lock                0x08008b77    0x4e  Code  Lc  ff.o [1]
+delay_ms                0x080175bd    0x1c  Code  Gb  SysTick.o [1]
+delay_us                0x08017581    0x26  Code  Gb  SysTick.o [1]
+digits                  0x08011a34    0x28  Data  Lc  xstoul.o [3]
+dir_alloc               0x080092af    0x58  Code  Lc  ff.o [1]
+dir_find                0x08009505    0xf6  Code  Lc  ff.o [1]
+dir_next                0x08009191   0x11e  Code  Lc  ff.o [1]
+dir_num                 0x2000921c    0x20  Data  Gb  sdfatfs.o [1]
+dir_register            0x080095fb   0x154  Code  Lc  ff.o [1]
+dir_sdi                 0x080090ef    0xa2  Code  Lc  ff.o [1]
+disk_initialize         0x0800ac31    0x2a  Code  Gb  diskio.o [1]
+disk_ioctl              0x0800ad13    0x54  Code  Gb  diskio.o [1]
+disk_read               0x0800ac5f    0x5a  Code  Gb  diskio.o [1]
+disk_status             0x0800ac5b     0x4  Code  Gb  diskio.o [1]
+disk_write              0x0800acb9    0x5a  Code  Gb  diskio.o [1]
+div                     0x08013677     0xe  Code  Gb  div.o [3]
+dmul                    0x08012c09    0x5a  Code  Lc  xdtento.o [5]
+dt                      0x0801b090     0x4  Data  Gb  IMU_Update.o [1]
+dw                      0x20009414     0x4  Data  Gb  Calculate_Wave.o [1]
+enq_lock                0x08008a6f    0x26  Code  Lc  ff.o [1]
+err_send_cnt            0x200094a8     0x2  Data  Gb  BNO055.o [1]
+exit                    0x0801aea7     0x4  Code  Gb  exit.o [3]
+f_angle_dot_pitch       0x20009488     0x4  Data  Gb  main.o [1]
+f_angle_dot_roll        0x20009478     0x4  Data  Gb  main.o [1]
+f_angle_pitch           0x20009484     0x4  Data  Gb  main.o [1]
+f_angle_roll            0x20009474     0x4  Data  Gb  main.o [1]
+f_close                 0x0800a67d    0x30  Code  Gb  ff.o [1]
+f_mkdir                 0x0800a78f   0x1c0  Code  Gb  ff.o [1]
+f_mount                 0x08009f57    0x66  Code  Gb  ff.o [1]
+f_open                  0x08009fc5   0x20c  Code  Gb  ff.o [1]
+f_opendir               0x0800a6cd    0xc2  Code  Gb  ff.o [1]
+f_printf                0x0800a9e5   0x24c  Code  Gb  ff.o [1]
+f_puts                  0x0800a99b    0x4a  Code  Gb  ff.o [1]
+f_read                  0x0800a1d1   0x1e2  Code  Gb  ff.o [1]
+f_sync                  0x0800a5d3    0xaa  Code  Gb  ff.o [1]
+f_write                 0x0800a3b3   0x220  Code  Gb  ff.o [1]
+ff_convert              0x0800ad81    0x4e  Code  Gb  unicode.o [1]
+ff_memalloc             0x0800ad71     0x8  Code  Gb  diskio.o [1]
+ff_memfree              0x0800ad79     0x8  Code  Gb  diskio.o [1]
+ff_wtoupper             0x0800adcf    0x32  Code  Gb  unicode.o [1]
+fft_i                   0x20009410     0x4  Data  Gb  Calculate_Wave.o [1]
+fft_inputbuf            0x200028cc  0x2000  Data  Gb  Calculate_Wave.o [1]
+file_cfg                0x200081d8   0x22c  Data  Gb  sdfatfs.o [1]
+file_loc                0x20007fac   0x22c  Data  Gb  sdfatfs.o [1]
+file_rcd                0x20007d80   0x22c  Data  Gb  sdfatfs.o [1]
+find_volume             0x08009b9d   0x384  Code  Lc  ff.o [1]
+first_down_count        0x200094d3     0x1  Data  Lc  Calculate_Wave.o [1]
+fit_lfn                 0x080093d7    0x74  Code  Lc  ff.o [1]
+float_to_string         0x0800f1bf   0x110  Code  Gb  Communication.o [1]
+fmodf                   0x080161dd          Code  Gb  fmodf.o [5]
+follow_path             0x080099ef    0x98  Code  Lc  ff.o [1]
+ftype                   0x200000b8     0x4  Data  Gb  sdfatfs.o [1]
+ftype1                  0x200000bc     0x4  Data  Gb  sdfatfs.o [1]
+gen_numname             0x08009451    0x96  Code  Lc  ff.o [1]
+get_fat                 0x08008d71    0xfe  Code  Gb  ff.o [1]
+get_fattime             0x0800ad6d     0x4  Code  Gb  diskio.o [1]
+get_iir_output          0x0801a39d    0x54  Code  Gb  Library_Filter.o [1]
+get_ldnumber            0x08009a87    0x98  Code  Lc  ff.o [1]
+gyro_Healthstate        0x200000c8     0x1  Data  Gb  Safe_Check.o [1]
+gyro_abnormal_count     0x200094c4     0x2  Data  Gb  Safe_Check.o [1]
+gyro_disconnect_count   0x200094c6     0x2  Data  Gb  Safe_Check.o [1]
+gyro_normal_count       0x200094c2     0x2  Data  Gb  Safe_Check.o [1]
+heading_count           0x20009368    0x10  Data  Gb  Calculate_Wave.o [1]
+i2c_master_read_register
+                        0x0801a20d    0x72  Code  Gb  Master_i2c.o [1]
+i2c_master_write_register
+                        0x0801a193    0x6c  Code  Gb  Master_i2c.o [1]
+icm_acc_abnormal_count  0x200094be     0x2  Data  Gb  Safe_Check.o [1]
+icm_acc_disconnect_count
+                        0x200094c0     0x2  Data  Gb  Safe_Check.o [1]
+icm_acc_normal_count    0x200094bc     0x2  Data  Gb  Safe_Check.o [1]
+id_num                  0x200094e0     0x1  Data  Gb  sdfatfs.o [1]
+inc_lock                0x08008a95    0xe2  Code  Lc  ff.o [1]
+intro_sort              0x0801581d   0x330  Code  Lc  qsort.o [3]
+io_haldware_reg_read    0x0801a2a3    0x12  Code  Gb  Master_i2c.o [1]
+io_haldware_reg_write   0x0801a27f    0x12  Code  Gb  Master_i2c.o [1]
+isCali_XYFactor_Check_Succeed
+                        0x08019969    0x7c  Code  Gb  Senser_calibration.o [1]
+isCali_XZFactor_Check_Succeed
+                        0x08019a83    0x6e  Code  Gb  Senser_calibration.o [1]
+ld_clust                0x08009307    0x22  Code  Lc  ff.o [1]
+log_data_time           0x20009340    0x14  Data  Gb  sdfatfs.o [1]
+log_time                0x200094de     0x1  Data  Gb  sdfatfs.o [1]
+m_Communication_RX_Buff
+                        0x20008eec    0x34  Data  Gb  Communication.o [1]
+m_Communication_RX_RingBuff
+                        0x20009304    0x14  Data  Gb  Communication.o [1]
+m_Communication_RX_WorkingBuff
+                        0x20008f20    0x34  Data  Gb  Communication.o [1]
+m_Communication_RX_WorkingBuff_DataCount
+                        0x200094d6     0x1  Data  Gb  Communication.o [1]
+m_GPS_RX_Buff           0x20008ca0    0x64  Data  Gb  GPS.o [1]
+m_GPS_RX_RingBuff       0x2000932c    0x14  Data  Gb  GPS.o [1]
+m_GPS_RX_WorkingBuff    0x20008d04    0x64  Data  Gb  GPS.o [1]
+m_GPS_RX_WorkingBuff_DataCount
+                        0x200094d8     0x1  Data  Gb  GPS.o [1]
+m_Log_Data_Buff         0x20008404   0x200  Data  Gb  sdfatfs.o [1]
+mag_Healthstate         0x200000c5     0x1  Data  Gb  Safe_Check.o [1]
+mag_abnormal_count      0x200094b0     0x2  Data  Gb  Safe_Check.o [1]
+mag_disconnect_count    0x200094b4     0x2  Data  Gb  Safe_Check.o [1]
+mag_normal_count        0x200094b2     0x2  Data  Gb  Safe_Check.o [1]
+main                    0x080175f9   0x45c  Code  Gb  main.o [1]
+mallco_dev              0x20000000    0x14  Data  Gb  malloc.o [1]
+med3                    0x08015753    0x50  Code  Lc  qsort.o [3]
+mem_cmp                 0x080089ad    0x20  Code  Lc  ff.o [1]
+mem_cpy                 0x08008989    0x14  Code  Lc  ff.o [1]
+mem_free                0x0800d2bf    0x4a  Code  Gb  malloc.o [1]
+mem_init                0x0800d1e1    0x28  Code  Gb  malloc.o [1]
+mem_malloc              0x0800d237    0x88  Code  Gb  malloc.o [1]
+mem_perused             0x0800d209    0x2e  Code  Gb  malloc.o [1]
+mem_set                 0x0800899d    0x10  Code  Lc  ff.o [1]
+membase                 0x200000cc  0x2800  Data  Gb  malloc.o [1]
+memblksize              0x0801b098     0x4  Data  Gb  malloc.o [1]
+memchr                  0x0801311d          Code  Gb  memchr.o [6]
+memcpy                  0x0800da15     0xc  Code  Gb  memcpy.o [3]
+memmapbase              0x200078cc   0x280  Data  Gb  malloc.o [1]
+memset                  0x0800fba5    0x14  Code  Gb  memset.o [3]
+memsize                 0x0801b09c     0x4  Data  Gb  malloc.o [1]
+memtblsize              0x0801b094     0x4  Data  Gb  malloc.o [1]
+move_window             0x08008c47    0x3c  Code  Lc  ff.o [1]
+myfree                  0x0800d309    0x12  Code  Gb  malloc.o [1]
+mymalloc                0x0800d31b    0x18  Code  Gb  malloc.o [1]
+mymemset                0x0800d1d1    0x10  Code  Gb  malloc.o [1]
+na_fft                  0x200094d1     0x1  Data  Gb  Calculate_Wave.o [1]
+ndigs                   0x08011a5c    0x28  Data  Lc  xstoul.o [3]
+ni_fft                  0x200094d0     0x1  Data  Gb  Calculate_Wave.o [1]
+pGps_Data               0x200000ac     0x4  Data  Gb  GPS.o [1]
+pHost_Cmd               0x2000004c     0x4  Data  Gb  Communication.o [1]
+pIMU_DataAD             0x20000044     0x4  Data  Gb  BNO055.o [1]
+pLevel1_Filter_Ax       0x20000060     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_Ay       0x20000064     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_Az       0x20000068     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_Gx       0x20000054     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_Gy       0x20000058     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_Gz       0x2000005c     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_ax       0x20000078     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_ay       0x2000007c     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_az       0x20000080     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_gx       0x2000006c     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_gy       0x20000070     0x4  Data  Gb  filter.o [1]
+pLevel1_Filter_gz       0x20000074     0x4  Data  Gb  filter.o [1]
+pRTC_Time               0x200000b4     0x4  Data  Gb  RX8010.o [1]
+pSenser_Data            0x20000048     0x4  Data  Gb  BNO055.o [1]
+pSenser_Data_filtered   0x2000008c     0x4  Data  Gb  filter.o [1]
+pSenser_Data_filtered_old
+                        0x20000090     0x4  Data  Gb  filter.o [1]
+pSenser_Data_filtered_pre_old
+                        0x20000094     0x4  Data  Gb  filter.o [1]
+pSenser_Data_old        0x20000084     0x4  Data  Gb  filter.o [1]
+pSenser_Data_pre_old    0x20000088     0x4  Data  Gb  filter.o [1]
+pWave_Data              0x200000b0     0x4  Data  Gb  IMU_Update.o [1]
+pows                    0x08012dc0    0x48  Data  Lc  xdtento.o [5]
+put_fat                 0x08008e6f   0x12a  Code  Gb  ff.o [1]
+putc_bfd                0x0800a94f    0x4c  Code  Lc  ff.o [1]
+px                      0x20000014    0x10  Data  Lc  IMU_Update.o [1]
+py                      0x20000024    0x10  Data  Lc  IMU_Update.o [1]
+qsort                   0x08015b4d     0xe  Code  Gb  qsort.o [3]
+qx_bias                 0x2000942c     0x4  Data  Lc  IMU_Update.o [1]
+qy_bias                 0x20009430     0x4  Data  Lc  IMU_Update.o [1]
+rbClear                 0x0800fb35     0xe  Code  Gb  ringbuffer.o [1]
+rbInitialize            0x0800fb21    0x14  Code  Gb  ringbuffer.o [1]
+rbIsEmpty               0x0800fb93    0x12  Code  Gb  ringbuffer.o [1]
+rbPop                   0x0800fb67    0x2c  Code  Gb  ringbuffer.o [1]
+rbPush                  0x0800fb43    0x24  Code  Gb  ringbuffer.o [1]
+read_1B                 0x0801a2b5     0xc  Code  Gb  Master_i2c.o [1]
+reg                     0x0801ae10    0x20  Data  Gb  ICM2060x.o [1]
+remove_chain            0x08008f99    0x6e  Code  Lc  ff.o [1]
+rot3                    0x08015695    0x6a  Code  Lc  qsort.o [3]
+rotate                  0x08015705    0x4e  Code  Lc  qsort.o [3]
+scfft                   0x200092dc    0x14  Data  Gb  Calculate_Wave.o [1]
+sdfs                    0x20007b4c   0x234  Data  Gb  sdfatfs.o [1]
+send_flag               0x200094cd     0x1  Data  Gb  BNO055.o [1]
+send_time               0x200094df     0x1  Data  Gb  sdfatfs.o [1]
+senser_data_ori         0x20008e28    0x48  Data  Gb  Safe_Check.o [1]
+sinf                    0x08014d4f     0x6  Code  Gb  sinf.o [5]
+slocal                  0x200091dc    0x20  Data  Gb  sdfatfs.o [1]
+sprintf                 0x08011705    0x34  Code  Gb  sprintf.o [3]
+sqrt                    0x08018ed5          Code  Gb  sqrt.o [5]
+sqrtl                   0x08018ed5          Code  Gb  sqrt.o [5]
+st_clust                0x08009329    0x18  Code  Lc  ff.o [1]
+step1_cnt               0x200094e7     0x1  Data  Lc  Senser_calibration.o [1]
+step3_cnt               0x200094e8     0x1  Data  Lc  Senser_calibration.o [1]
+str_return              0x200093b8     0xc  Data  Gb  Communication.o [1]
+strcat                  0x08011739    0x1c  Code  Gb  strcat.o [3]
+strchr                  0x080116d5          Code  Gb  strchr.o [6]
+strchr_Length           0x0801046d    0x12  Code  Gb  sdfatfs.o [1]
+strlen                  0x08013181          Code  Gb  strlen.o [6]
+strstr                  0x080116cb     0x8  Code  Gb  sdfatfs.o [1]
+strstr_Length           0x08010453    0x1a  Code  Gb  sdfatfs.o [1]
+sum_sfn                 0x080094e7    0x1e  Code  Lc  ff.o [1]
+swap                    0x0801563d    0x58  Code  Lc  qsort.o [3]
+sync_fs                 0x08008c83    0xd6  Code  Lc  ff.o [1]
+sync_window             0x08008bf3    0x54  Code  Lc  ff.o [1]
+tanf                    0x0801a3f1   0x12a  Code  Gb  tanf.o [5]
+tempbuff                0x200096f8     0x4  Data  Gb  sdio_sdcard.o [1]
+time_count              0x200094db     0x1  Data  Gb  main.o [1]
+twiddleCoef_4096        0x08000988  0x8000  Data  Gb  arm_common_tables.o [4]
+tx_0                    0x20009448     0x4  Data  Lc  IMU_Update.o [1]
+tx_1                    0x2000944c     0x4  Data  Lc  IMU_Update.o [1]
+ty_0                    0x20009464     0x4  Data  Lc  IMU_Update.o [1]
+ty_1                    0x20009468     0x4  Data  Lc  IMU_Update.o [1]
+validate                0x08009f21    0x36  Code  Lc  ff.o [1]
+w                       0x200068cc  0x1000  Data  Gb  Calculate_Wave.o [1]
+week_num                0x200094e1     0x1  Data  Gb  sdfatfs.o [1]
+write_1B                0x0801a291    0x12  Code  Gb  Master_i2c.o [1]
+
+
+[1] = C:\Users\Administrator\Desktop\Wave_Senser-3.2\controller\EWARM\Debug\Obj
+[2] = command line
+[3] = dl7M_tln.a
+[4] = iar_cortexM4lf_math.a
+[5] = m7M_tlv.a
+[6] = rt7M_tl.a
+[7] = shb_l.a
+
+  74 095 bytes of readonly  code memory
+  37 165 bytes of readonly  data memory
+  50 938 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

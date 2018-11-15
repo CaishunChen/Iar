@@ -1,0 +1,353 @@
+/**
+******************************************************************************
+* @file    TIM/TIM_TimeBase/main.c
+* @author  UAV Application Team
+* @version V2.1.0
+* @date    23-September-2014
+* @brief   Main Interrupt Service Routines.
+*          This file provides template for all exceptions handler and peripherals
+*          interrupt service routine.
+******************************************************************************
+*/
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_it.h"
+#include "BNO055.h"
+#include "ringbuffer.h"
+#include "adconvert.h"
+/** @addtogroup STM32F4xx_StdPeriph_Examples
+* @{
+*/
+
+/** @addtogroup TIM_TimeBase
+* @{
+*/
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+
+
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+
+/******************************************************************************/
+/*            Cortex-M4 Processor Exceptions Handlers                         */
+/******************************************************************************/
+
+/**
+* @brief  This function handles NMI exception.
+* @param  None
+* @retval None
+*/
+void NMI_Handler(void)
+{
+}
+
+/**
+* @brief  This function handles Hard Fault exception.
+* @param  None
+* @retval None
+*/
+void HardFault_Handler(void)
+{
+  /* Go to infinite loop when Hard Fault exception occurs */
+  while (1)
+  {}
+}
+
+/**
+* @brief  This function handles Memory Manage exception.
+* @param  None
+* @retval None
+*/
+void MemManage_Handler(void)
+{
+  /* Go to infinite loop when Memory Manage exception occurs */
+  while (1)
+  {}
+}
+
+/**
+* @brief  This function handles Bus Fault exception.
+* @param  None
+* @retval None
+*/
+void BusFault_Handler(void)
+{
+  /* Go to infinite loop when Bus Fault exception occurs */
+  while (1)
+  {}
+}
+
+/**
+* @brief  This function handles Usage Fault exception.
+* @param  None
+* @retval None
+*/
+void UsageFault_Handler(void)
+{
+  /* Go to infinite loop when Usage Fault exception occurs */
+  while (1)
+  {}
+}
+
+/**
+* @brief  This function handles Debug Monitor exception.
+* @param  None
+* @retval None
+*/
+void DebugMon_Handler(void)
+{}
+
+/**
+* @brief  This function handles SVCall exception.
+* @param  None
+* @retval None
+*/
+void SVC_Handler(void)
+{}
+
+/**
+* @brief  This function handles PendSV_Handler exception.
+* @param  None
+* @retval None
+*/
+void PendSV_Handler(void)
+{}
+
+/**
+* @brief  This function handles SysTick Handler.
+* @param  None
+* @retval None
+*/
+
+void SysTick_Handler(void)
+{
+  /*  if (TimingDelay != 0)
+  {
+  TimingDelay--;
+}
+  */
+}
+
+
+/**
+* @brief  This function handles TIM3 global interrupt request.
+* @param  None
+* @retval None
+*/
+uint8_t Time3_Flag_400hz=0,Time3_Flag_50hz=0,Time3_Flag_5hz=0,Time3_Flag_20hz=0,Time3_Flag_Led1=0,Time3_Flag_100hz=0,Time3_Flag_2hz=0;
+uint8_t Time3_Count_5hz=0,Time3_Count_50hz=0,Time3_Count_8hz=0,Time3_Count_100hz=0,Time3_Count_20hz=0,Time3_Count_2hz=0;
+u8 Time3_Count_SRF02 = 0;
+u8 Time3_Flag_SRF02 = 0;
+
+void TIM3_IRQHandler(void)
+{
+  if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+  {
+    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+    Time3_Flag_400hz=1;
+    Time3_Count_50hz++;
+    Time3_Count_5hz++;
+    Time3_Count_SRF02++;
+    Time3_Count_8hz++;
+    Time3_Count_100hz++;
+    Time3_Count_20hz++;
+    Time3_Count_2hz++;
+
+    if(Time3_Count_SRF02 >= 40)
+    {
+      Time3_Count_SRF02 = 0;
+      Time3_Flag_SRF02 = 1;
+    }
+    if(Time3_Count_100hz>=4)
+    {
+      Time3_Flag_100hz=1;
+      Time3_Count_100hz=0;
+    }
+    if(Time3_Count_50hz>=8)
+    {
+      Time3_Flag_50hz=1;
+      Time3_Count_50hz=0;
+    }
+    
+    if(Time3_Count_20hz>=20)
+    {
+      Time3_Flag_20hz=1;
+      Time3_Count_20hz=0;
+    }
+    
+    if(Time3_Count_8hz>=50)
+    {
+
+      Time3_Count_8hz = 0;
+    } 
+    if(Time3_Count_5hz>=80)
+    {
+      Time3_Flag_5hz=1;
+
+      Time3_Count_5hz=0;
+    }  
+    if(Time3_Count_2hz>=200)
+    {
+      Time3_Flag_2hz=1;
+      
+      Time3_Count_2hz=0;
+    }  
+
+  }
+}
+
+
+/*-------------------------串口中断 BNO055  ----------------------------------*/
+uint8_t data_BNO055;
+
+extern RingBuffer BNO055_RX_RingBuff;
+//extern int config_step;
+void UART4_IRQHandler(void)
+{ 
+
+  if (USART_GetFlagStatus(UART4, USART_FLAG_ORE) != RESET)
+  {
+    //USART_ClearFlag(USART1,USART_FLAG_ORE);
+    USART_ReceiveData(UART4);
+    //The RXNE flag can also be cleared by a read operation to the USART_DR register(USART_ReceiveData()).
+  }
+  if(USART_GetITStatus(UART4,USART_IT_RXNE) != RESET)
+  {
+    // USART_ClearITPendingBit(UART4,USART_IT_RXNE);  //清中断标志位
+    data_BNO055 = USART_ReceiveData(UART4);
+ rbPush(&BNO055_RX_RingBuff, data_BNO055); 
+  
+  }
+  
+  
+  
+  
+//  static int judgeflag=0;
+//  if (USART_GetFlagStatus(UART4, USART_FLAG_ORE) != RESET)
+//  {
+//    //USART_ClearFlag(USART1,USART_FLAG_ORE);
+//    USART_ReceiveData(UART4);
+//    //The RXNE flag can also be cleared by a read operation to the USART_DR register(USART_ReceiveData()).
+//  }
+//  
+//  if(USART_GetITStatus(UART4,USART_IT_RXNE) ==SET)
+//  {
+//    USART_ClearITPendingBit(UART4,USART_IT_RXNE);  //清中断标志位
+//   
+//    data_BNO055 = USART_ReceiveData(UART4);
+//    
+//    if(config_step < 4)
+//    {
+//    if(data_BNO055==0x01 && judgeflag == 1)
+//    {
+////      config_step++;
+//      judgeflag = 0;
+//    }
+//    else
+//    {
+//      if(data_BNO055!=0xEE)
+//        judgeflag = 0;
+//    }
+//    }
+//    data[1]=USART_ReceiveData(UART4);
+//    rbPush(&BNO055_RX_RingBuff, data_BNO055);
+//  }
+//  if(data_BNO055==0xEE)
+//      judgeflag = 1;
+//  count5++;
+}
+/*-------------------------tim2中断 ADI    ----------------------------------*/
+//void TIM2_IRQHandler(void)
+//{
+//  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) 
+//   {  
+//      TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+//      AD_To_RawAhrs();
+////      GyroAcc_RawData_Process();
+////      ADC_data_filter();
+//
+//   }
+//}
+
+/*------------------------- 232串口中断函数 ----------------------------------*/
+extern RingBuffer  m_Communication_RX_RingBuff;
+void USART2_IRQHandler(void)
+{
+  uint8_t data;
+  if (USART_GetFlagStatus(USART2, USART_FLAG_ORE) != RESET)
+  {
+    USART_ClearFlag(USART2,USART_FLAG_ORE);
+    USART_ReceiveData(USART2);
+    //The RXNE flag can also be cleared by a read operation to the USART_DR register(USART_ReceiveData()).
+  }  
+  if(USART_GetITStatus(USART2,USART_IT_RXNE) ==SET)
+  {
+    data = USART_ReceiveData(USART2);
+
+    rbPush(&m_Communication_RX_RingBuff, data);
+
+  }
+}
+
+/*------------------------- GPS串口中断函数 ----------------------------------*/
+extern RingBuffer  m_GPS_RX_RingBuff;
+void USART3_IRQHandler(void)
+{
+  uint8_t data;
+  if (USART_GetFlagStatus(USART3, USART_FLAG_ORE) != RESET)
+  {
+    USART_ClearFlag(USART3,USART_FLAG_ORE);
+    USART_ReceiveData(USART3);
+    //The RXNE flag can also be cleared by a read operation to the USART_DR register(USART_ReceiveData()).
+  }  
+  if(USART_GetITStatus(USART3,USART_IT_RXNE) ==SET)
+  {
+    data = USART_ReceiveData(USART3);
+
+    rbPush(&m_GPS_RX_RingBuff, data);
+
+  }
+}
+
+/*------------------------- USART1串口中断函数 ----------------------------------*/
+extern RingBuffer  m_Communication_RX_RingBuff;
+void USART1_IRQHandler(void)
+{
+  uint8_t data;
+  if (USART_GetFlagStatus(USART1, USART_FLAG_ORE) != RESET)
+  {
+    USART_ClearFlag(USART1,USART_FLAG_ORE);
+    USART_ReceiveData(USART1);
+    //The RXNE flag can also be cleared by a read operation to the USART_DR register(USART_ReceiveData()).
+  }  
+  if(USART_GetITStatus(USART1,USART_IT_RXNE) ==SET)
+  {
+    data = USART_ReceiveData(USART1);
+
+    rbPush(&m_Communication_RX_RingBuff, data);
+
+  }
+}
+
+void double2hex(uint8_t *hexdata, double ddata)
+{
+  union{
+    double doubledata;
+    uint8_t byte[8];
+  }ddat;
+  
+  ddat.doubledata = ddata;
+  
+  hexdata[0] = ddat.byte[0];
+  hexdata[1] = ddat.byte[1];
+  hexdata[2] = ddat.byte[2];
+  hexdata[3] = ddat.byte[3];
+  hexdata[4] = ddat.byte[4];
+  hexdata[5] = ddat.byte[5];
+  hexdata[6] = ddat.byte[6];
+  hexdata[7] = ddat.byte[7];
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<userOverrides>
+  <override>
+    <path>C:\Users\hello\Desktop\Fly Control_0824 -srf02&#x6539;\controller\User\Application\SRF02.c</path>
+    <encoding>System</encoding>
+  </override>
+  <override>
+    <path>C:\Users\hello\Desktop\Fly Control_0824 -srf02&#x6539;\controller\User\Application\main.c</path>
+    <encoding>System</encoding>
+  </override>
+  <override>
+    <path>C:\Users\hello\Desktop\Fly Control_0824\controller\User\Application\SRF02.c</path>
+    <encoding>System</encoding>
+  </override>
+</userOverrides>
+
+

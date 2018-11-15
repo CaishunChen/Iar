@@ -1,0 +1,175 @@
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[DebugChecksum]
+Checksum=1630953840
+[Exceptions]
+StopOnUncaught=_ 0
+StopOnThrow=_ 0
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[SWOTraceHWSettings]
+OverrideDefaultClocks=0
+CpuClock=168000000
+ClockAutoDetect=0
+ClockWanted=2000000
+JtagSpeed=2000000
+Prescaler=84
+TimeStampPrescIndex=0
+TimeStampPrescData=0
+PcSampCYCTAP=1
+PcSampPOSTCNT=15
+PcSampIndex=0
+DataLogMode=0
+ITMportsEnable=0
+ITMportsTermIO=0
+ITMportsLogFile=0
+ITMlogFile=$PROJ_DIR$\ITM.log
+[struct_types]
+Fmt0=PAIR-cj	3	0
+Fmt1=PAIR-sub	3	0
+Fmt2=SDIO_CmdInitTypeDef-SDIO_Argument	4	0
+Fmt3=SDIO_CmdInitTypeDef-SDIO_CPSM	4	0
+Fmt4=SDIO_CmdInitTypeDef-SDIO_CmdIndex	4	0
+Fmt5=SDIO_CmdInitTypeDef-SDIO_Response	4	0
+Fmt6=SDIO_CmdInitTypeDef-SDIO_Wait	4	0
+Fmt7=SD_CardInfo-CardCapacity	3	0
+Fmt8=d_Gps_Data-Beijing_Day	3	0
+Fmt9=d_Gps_Data-Beijing_Hour	3	0
+Fmt10=d_Gps_Data-Beijing_Minute	3	0
+Fmt11=d_Gps_Data-Beijing_Month	3	0
+Fmt12=d_Gps_Data-Beijing_Second	3	0
+Fmt13=d_Gps_Data-Beijing_Year	3	0
+Fmt14=d_Gps_Data-UTC_Day	3	0
+Fmt15=d_Gps_Data-UTC_Hour	3	0
+Fmt16=d_Gps_Data-UTC_Minute	3	0
+Fmt17=d_Gps_Data-UTC_Month	3	0
+Fmt18=d_Gps_Data-UTC_Second	3	0
+Fmt19=d_Host_Cmd-Min_WaveHeught	4	0
+Fmt20=d_RTC_Time-Interval_day	3	0
+Fmt21=d_RTC_Time-Interval_hour	3	0
+Fmt22=d_RTC_Time-Interval_min	3	0
+Fmt23=d_RTC_Time-Interval_month	3	0
+Fmt24=d_RTC_Time-Interval_sec	3	0
+Fmt25=d_RTC_Time-Interval_year	3	0
+Fmt26=d_RTC_Time-Local_Day	3	0
+Fmt27=d_RTC_Time-Local_Hour	3	0
+Fmt28=d_RTC_Time-Local_Minute	3	0
+Fmt29=d_RTC_Time-Local_Month	3	0
+Fmt30=d_RTC_Time-Local_Second	3	0
+Fmt31=d_RTC_Time-day	3	0
+Fmt32=d_RTC_Time-hour	3	0
+Fmt33=d_RTC_Time-min	3	0
+Fmt34=d_RTC_Time-mon	3	0
+Fmt35=d_RTC_Time-sec	3	0
+Fmt36=d_RTC_Time-week	3	0
+Fmt37=d_RTC_Time-year	3	0
+Fmt38=d_Senser_Data-State	1	0
+Fmt39=d_Wave_Data-Wave_Cycle_Times	3	0
+Fmt40=struct data_map-Mag_is_good	4	0
+[array_types]
+Fmt0=u8[100]	4	0
+Fmt1=u8[20]	4	0
+Fmt2=u8[30]	4	0
+Fmt3=u8[50]	4	0
+Fmt4=u8[7]	4	0
+Fmt5=u8[80]	4	0
+Fmt6=uint8_t[15]	4	0
+Fmt7=uint8_t[16]	3	0
+Fmt8=uint8_t[20]	4	0
+Fmt9=uint8_t[30]	4	0
+Fmt10=uint8_t[33]	4	0
+Fmt11=uint8_t[51]	4	0
+Fmt12=uint8_t[5]	5	0
+Fmt13=uint8_t[6]	4	0
+Fmt14=uint8_t[7]	4	0
+[watch_formats]
+Fmt0={W}42:Data_TX_Frequence	1	0
+Fmt1={W}42:GPS_Connect_Flag	1	0
+Fmt2={W}42:Min_WaveHeught	3	0
+Fmt3={W}42:Routine_Data_flag	1	0
+Fmt4={W}42:Senser_Cail_CMD	4	0
+Fmt5={W}42:Time3_Count_100hz	3	0
+Fmt6={W}42:acc_cycle_i	3	0
+Fmt7={W}42:buf_i	3	0
+Fmt8={W}42:clock	3	0
+Fmt9={W}42:cnt_ave	3	0
+Fmt10={W}42:current_heading_i	3	0
+Fmt11={W}42:dev1	3	0
+Fmt12={W}42:gravity_i	3	0
+Fmt13={W}42:height_min_cail	3	0
+Fmt14={W}42:j	4	0
+Fmt15={W}42:k	3	0
+Fmt16={W}42:len	3	0
+Fmt17={W}42:m_Communication_RX_WorkingBuff[13]	1	0
+Fmt18={W}42:m_Communication_RX_WorkingBuff_DataCount	3	0
+Fmt19={W}42:ni_fft	3	0
+Fmt20={W}42:pHost_Cmd->Scan_Mode_Select	4	0
+Fmt21={W}42:pSenser_Data->State	1	0
+Fmt22={W}42:pWave_Data->Tradion_Sample_Enable	3	0
+Fmt23={W}42:pWave_Data->Tradion_Sample_Start	4	0
+Fmt24={W}42:pWave_Data->Wave_Cycle_Times	3	0
+Fmt25={W}42:sta_i	3	0
+Fmt26={W}42:txbuf1[10]	4	0
+Fmt27={W}42:txbuf1[13]	4	0
+Fmt28={W}42:txbuf1[9]	4	0
+[Trace2]
+Enabled=0
+ShowSource=0
+[SWOTraceWindow]
+PcSampling=0
+InterruptLogs=0
+ForcedTimeStamps=0
+EventCPI=0
+EventEXC=0
+EventFOLD=0
+EventLSU=0
+EventSLEEP=0
+[DataLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+[InterruptLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$}.47.9" 0 0 1 "" 0 "" 0
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\Driver\source\sdio_sdcard.c}.1668.5" 0 0 1 "" 0 "" 0
+Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\Driver\source\sdio_sdcard.c}.1668.5" 0 0 1 "" 0 "" 0
+Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\Driver\source\sdio_sdcard.c}.1668.5" 0 0 1 "" 0 "" 0
+Count=4
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[Aliases]
+Count=0
+SuppressDialog=0
+[CallStackLog]
+Enabled=0
+[DriverProfiling]
+Enabled=0
+Mode=3
+Graph=0
+Symbiont=0
+Exclusions=

@@ -1,0 +1,199 @@
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[JLinkDriver]
+CStepIntDis=_ 0
+[DebugChecksum]
+Checksum=547001921
+[Exceptions]
+StopOnUncaught=_ 0
+StopOnThrow=_ 0
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[SWOTraceHWSettings]
+OverrideDefaultClocks=0
+CpuClock=168000000
+ClockAutoDetect=0
+ClockWanted=2000000
+JtagSpeed=2000000
+Prescaler=84
+TimeStampPrescIndex=0
+TimeStampPrescData=0
+PcSampCYCTAP=1
+PcSampPOSTCNT=15
+PcSampIndex=0
+DataLogMode=0
+ITMportsEnable=0
+ITMportsTermIO=0
+ITMportsLogFile=0
+ITMlogFile=$PROJ_DIR$\ITM.log
+[Breakpoints]
+Count=0
+[MemoryMap]
+Enabled=0
+Base=0
+UseAuto=0
+TypeViolation=1
+UnspecRange=1
+ActionState=1
+[TraceHelper]
+Enabled=0
+ShowSource=1
+[Interrupts]
+Enabled=1
+[MemConfig]
+Base=1
+Manual=0
+Ddf=1
+TypeViol=0
+Stop=1
+[Simulator]
+Freq=10000000
+MultiCoreRunAll=1
+[PlDriver]
+MemConfigValue=C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\CONFIG\debugger\ST\STM32F207VG.ddf
+[Jet]
+DisableInterrupts=0
+MultiCoreRunAll=0
+OnlineReset=Connect during reset
+[ArmDriver]
+EnableCache=1
+[PowerLog]
+LogEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=0
+Title_0=I0
+Symbol_0=0 4 1
+LiveEnabled=0
+LiveFile=PowerLogLive.log
+[EventLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[PowerProbe]
+Frequency=10000
+Probe0=I0
+ProbeSetup0=2 1 1 2 0 0
+[array_types]
+Fmt0=u8[20]	4	0
+Fmt1=u8[2]	4	0
+Fmt2=u8[80]	4	0
+Fmt3=uint8_t[100]	4	0
+Fmt4=uint8_t[20]	4	0
+Fmt5=uint8_t[50]	4	0
+[watch_formats]
+Fmt0={W}42:RGB_Brightness	3	0
+Fmt1={W}42:TxData_CAN	0	1
+Fmt2={W}42:W25qxx_FlashRead_Error	4	0
+Fmt3={W}42:cntdecode	3	0
+Fmt4={W}42:corr_cnt	3	0
+Fmt5={W}42:count1	3	0
+Fmt6={W}42:count2	3	0
+Fmt7={W}42:count6	3	0
+Fmt8={W}42:count7	3	0
+Fmt9={W}42:err_cnt	3	0
+Fmt10={W}42:m_Communication_RX_WorkingBuff	0	3
+[SWOTraceWindow]
+PcSampling=0
+InterruptLogs=0
+ForcedTimeStamps=0
+EventCPI=0
+EventEXC=0
+EventFOLD=0
+EventLSU=0
+EventSLEEP=0
+[DataLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+[InterruptLog]
+LogEnabled=0
+SumEnabled=0
+GraphEnabled=0
+ShowTimeLog=1
+ShowTimeSum=1
+SumSortOrder=0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[CallStackLog]
+Enabled=0
+[DriverProfiling]
+Enabled=0
+Mode=3
+Graph=0
+Symbiont=0
+Exclusions=
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
+[Aliases]
+A0=_ "C:\Users\Administrator\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c" ""
+A1=_ "C:\Users\Administrator\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Application\main.c" "C:\Users\Administrator\Desktop\S0\Batpro_AP_APP_V3.05(BNO)\controller\User\Application\main.c"
+A2=_ "C:\Users\Administrator\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\SysTick.c" "C:\Users\Administrator\Desktop\S0\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\SysTick.c"
+A3=_ "C:\Users\Administrator\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\ringbuffer.c" ""
+A4=_ "C:\Users\Administrator\Desktop\Control_V1.3（3）\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" "F:\new controller\control v1.3(4)\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c"
+A5=_ "C:\Users\Administrator\Desktop\control v1.3(6)-室内(1)\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" "D:\增稳控制——11.18\control v1.3(6)-室内(1)(1)\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c"
+A6=_ "C:\Users\Administrator\Desktop\电力巡检飞机程序\航拍机V19(led测试） (发送改）\单芯片控制板程序\controller\User\Driver\source\spi.c" ""
+A7=_ "C:\Users\Administrator\Desktop\飞机程序(整合V4）（云台）\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" ""
+A8=_ "C:\Users\Administrator\Desktop\飞机程序(整合V4）（云台）\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\User\Application\PID_Parameter.c" ""
+A9=_ "C:\Users\Administrator\Desktop\飞机程序(整合V6）（自主起飞气压计判断）\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" ""
+A10=_ "C:\Users\Administrator\Desktop\飞机程序(整合V6）（自主起飞气压计判断）\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\Libraries\CMSIS\Include\core_cm4.h" ""
+A11=_ "C:\Users\Administrator\Desktop\飞机程序(整合V6）（自主起飞气压计判断）\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\User\Application\PID_Parameter.c" "D:\整合程序\飞机程序(整合V7）（自主起飞（北科大））\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\User\Application\PID_Parameter.c"
+A12=_ "C:\Users\Administrator\Desktop\飞机程序\单芯片控制板程序\controller\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" ""
+A13=_ "C:\Users\Administrator\Desktop\飞机程序\单芯片控制板程序\controller\User\Driver\source\spi.c" ""
+A14=_ "C:\Users\Administrator\Desktop\航拍机V14(检测高度原路返回）\单芯片控制板程序\controller\User\Driver\source\spi.c" "D:\电力巡检飞机程序\航拍机V18(测试无线信号）\单芯片控制板程序\controller\User\Driver\source\spi.c"
+A15=_ "C:\Users\Administrator\Desktop\航拍机V15(机头转向)\单芯片控制板程序\controller\User\Driver\source\Voltage_Test.c" "C:\Users\Administrator\Desktop\航拍机V16(机头转向)\单芯片控制板程序\controller\User\Driver\source\Voltage_Test.c"
+A16=_ "C:\Users\LenovoThink\Desktop\飞机程序\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\User\Application\PID_Parameter.c" ""
+A17=_ "C:\Users\hello\Desktop\APP_AP_Batpro_Vcan3.41_Commu_New\controller\User\Driver\source\RTK_Novatel_gps.c" "C:\Users\hello\Desktop\canV3.3\APP_AP_Batpro_Vcan3.42_Commu_New\controller\User\Driver\source\RTK_Novatel_gps.c"
+A18=_ "C:\Users\hello\Desktop\APP_AP_Batpro_Vcan3.43_Commu_New\controller\User\Driver\source\time_init.c" "C:\Users\hello\Desktop\canV3.4\APP_AP_Batpro_Vcan3.43_Commu_New_AV2P\controller\User\Driver\source\time_init.c"
+A19=_ "C:\Users\hello\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\SysTick.c" ""
+A20=_ "C:\Users\hello\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\ringbuffer.c" "C:\Users\Administrator\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\ringbuffer.c"
+A21=_ "C:\Users\hello\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\time_init.c" "C:\Users\Administrator\Desktop\Batpro_AP_APP_V3.05(BNO)\controller\User\Driver\source\time_init.c"
+A22=_ "C:\Users\hello\Desktop\Batpro_山东_WTF8 - 副本\controller\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_adc.c" "C:\Users\hello\Desktop\Batpro_山东_WTF9\controller\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_adc.c"
+A23=_ "C:\Users\hello\Desktop\GPS_Alt控制器（V1.3）(vel_delay)（植保路点）\controller\Libraries\STM32F4xx_StdPeriph_Driver\src\misc.c" ""
+A24=_ "C:\Users\hello\Desktop\GPS_Alt控制器（V1.3江西天地飞）\controller\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_adc.c" ""
+A25=_ "C:\Users\hello\Desktop\GPS_Alt控制器（V1.3江西天地飞）\controller\User\Application\sensor_static_calibration.c" "C:\Users\hello\Desktop\GPS_Alt控制器（V1.3江西天地飞+新版飞控）\controller\User\Application\sensor_static_calibration.c"
+A26=_ "C:\Users\hello\Desktop\UPDATA\APP_AP_Batpro_Vcan3.3_Commu_New\controller\User\Driver\source\RTK_Novatel_gps.c" "C:\Users\hello\Desktop\canV3.3\FIRMWAREUPDATE\APP_AP_Batpro_Vcan3.3_Commu_New\controller\User\Driver\source\RTK_Novatel_gps.c"
+A27=_ "C:\Users\hello\Desktop\canV3.3\APP_AP_Batpro_Vcan3.42_Commu_New\controller\User\Driver\source\RTK_Novatel_gps.c" ""
+A28=_ "C:\Users\hello\Desktop\canV3.4\APP_AP_Batpro_Vcan3.47_Commu_New_AV2P\controller\User\Driver\source\time_init.c" "C:\Users\hello\Desktop\APP_AP_Batpro_Vcan3.47_Commu_New_AV2P\controller\User\Driver\source\time_init.c"
+A29=_ "C:\Users\hello\Desktop\程序\Batpro_山东_WTF9\controller\User\Application\prop_control_mode_update.c" "C:\Users\hello\Desktop\程序\Batpro_山东_WTF9 CAN\controller\User\Application\prop_control_mode_update.c"
+A30=_ "C:\Users\hello\Desktop\新版飞控+IMU（V4电调范围改）\controller\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" ""
+A31=_ "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\GPS_Alt控制器（V1.5江西天地飞+新版飞控）\controller\User\Application\PID_Parameter.c" "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\新版飞控+IMU（临时测试用)\controller\User\Application\PID_Parameter.c"
+A32=_ "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\GPS_Alt控制器（V1.5江西天地飞+新版飞控）\controller\User\Application\main.c" ""
+A33=_ "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\GPS_Alt控制器（V1.5江西天地飞+新版飞控）\controller\User\Application\sensor_static_calibration.c" "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\新版飞控+IMU（临时测试用)\controller\User\Application\sensor_static_calibration.c"
+A34=_ "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\新版飞控+IMU（临时测试用)\controller\Libraries\CMSIS\Include\core_cm4.h" ""
+A35=_ "C:\Users\hello\Desktop\新版飞控+新版ＩＭＵ程序\新版飞控+IMU（临时测试用)\controller\User\Driver\source\time_init.c" ""
+A36=_ "C:\Users\hello\Desktop\新版飞控2.0 (江西飞机诺瓦泰版）(遥控自主)\controller\User\Application\PIXSensorCombined.c" "C:\Users\hello\Desktop\飞控2.0程序\新版飞控2.0 (江西飞机诺瓦泰版）(遥控自主起降)\controller\User\Application\PIXSensorCombined.c"
+A37=_ "C:\Users\hello\Desktop\新版飞控2.0 (江西飞机诺瓦泰版）\controller\User\Application\PIXSensorCombined.c" ""
+A38=_ "C:\Users\jinqi\Desktop\Control_V1.3\slaver\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c" "F:\360data\重要数据\桌面\Control_V1.3（2）\slaver\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c"
+A39=_ "C:\Users\jinqi\Desktop\Control_V1.3\slaver\User\Driver\source\IO_Toggle.c" "F:\360data\重要数据\桌面\Control_V1.3（2）\slaver\User\Driver\source\IO_Toggle.c"
+A40=_ "C:\Users\jinqi\Desktop\Control_V1.3\slaver\User\Driver\source\uart_init.c" "F:\360data\重要数据\桌面\Control_V1.3（2）\slaver\User\Driver\source\uart_init.c"
+A41=_ "D:\增稳控制——11.18\2014.11.25new\control v1.3(6)-室内(1)(1)\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" "F:\single_chip_controller\control v1\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c"
+A42=_ "D:\整合程序\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\User\Application\PID_Parameter.c" ""
+A43=_ "F:\new controller\control v1.3(4) - Gyrozerod\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c" "F:\360data\重要数据\桌面\control v1.3(6)-室内\slaver\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c"
+A44=_ "F:\single_chip\control v1\slaver\User\Application\main.c" ""
+A45=_ "F:\整合程序\飞机程序(整合V7）（自主起飞（北科大））\飞机程序(整合V4）（云台）\单芯片控制板程序\controller\User\Driver\source\Voltage_Test.c" ""
+A46=_ "G:\Batpro_AP_APP_V3.05\controller\User\Driver\source\GPS_Combine_Yaw.c" "I:\Batpro_AP_APP_V3.05\controller\User\Driver\source\GPS_Combine_Yaw.c"
+Count=47
+SuppressDialog=1

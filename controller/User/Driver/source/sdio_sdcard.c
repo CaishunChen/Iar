@@ -1,0 +1,1823 @@
+#include "sdio_sdcard.h"
+#include "string.h"
+#include "sys.h"
+#include "SysTick.h"
+//////////////////////////////////////////////////////////////////////////////////
+
+
+/*車?車迆sdio3?那??‘米??芍11足?*/
+SDIO_InitTypeDef SDIO_InitStructure;
+SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
+SDIO_DataInitTypeDef SDIO_DataInitStructure;
+
+SD_Error CmdError( void );
+SD_Error CmdResp7Error( void );
+SD_Error CmdResp1Error( u8 cmd );
+SD_Error CmdResp3Error( void );
+SD_Error CmdResp2Error( void );
+SD_Error CmdResp6Error( u8 cmd, u16* prca );
+SD_Error SDEnWideBus( u8 enx );
+SD_Error IsCardProgramming( u8* pstatus );
+SD_Error FindSCR( u16 rca, u32* pscr );
+u8 convert_from_bytes_to_power_of_two( u16 NumberOfBytes );
+
+
+static u8 CardType = SDIO_STD_CAPACITY_SD_CARD_V1_1;    //SD?“角角D赤㏒“??豕??a1.x?“㏒?
+static u32 CSD_Tab[4], CID_Tab[4], RCA = 0;             //SD?“CSD,CID辰??～?角??米??﹞(RCA)那y?Y
+static u8 DeviceMode = SD_DMA_MODE;                     //1∟℅ˉ?㏒那?,℅⊿辰a,1∟℅ˉ?㏒那?㊣?D?赤“1ySD_SetDeviceMode,o車2???那y.?a角???那??“辰?辰?????豕?米??㏒那?(SD_DMA_MODE)
+static u8 StopCondition = 0;                            //那?﹞?﹞⊿?赤赤㏒?1∩?那?㊣那????,DMA?角?谷?芍D∩米?那㊣o辰車?米?
+volatile SD_Error TransferError = SD_OK;                //那y?Y∩?那?∩赤?車㊣那??,DMA?芍D∩那㊣那1車?
+volatile u8 TransferEnd = 0;                            //∩?那??芍那?㊣那??,DMA?芍D∩那㊣那1車?
+SD_CardInfo SDCardInfo;                                 //SD?“D??⊿
+
+//SD_ReadDisk/SD_WriteDisko‘那y℅“車?buf,米㊣?a芍???o‘那y米?那y?Y?o∩???米??﹞2?那?4℅??迆????米?那㊣o辰,
+//D豕辰a車?米???那y℅谷,豕﹞㊣㏒那y?Y?o∩???米??﹞那?4℅??迆????米?.
+#pragma pack(push,4)
+__no_init u8 SDIO_DATA_BUFFER[512];
+
+
+void SDIO_Register_Deinit()
+{
+    SDIO->POWER = 0x00000000;
+    SDIO->CLKCR = 0x00000000;
+    SDIO->ARG = 0x00000000;
+    SDIO->CMD = 0x00000000;
+    SDIO->DTIMER = 0x00000000;
+    SDIO->DLEN = 0x00000000;
+    SDIO->DCTRL = 0x00000000;
+    SDIO->ICR = 0x00C007FF;
+    SDIO->MASK = 0x00000000;
+}
+
+//3?那??‘SD?“
+//﹞米???米:∩赤?車∩迆??;(0,?T∩赤?車)
+SD_Error SD_Init( void )
+{
+    GPIO_InitTypeDef  GPIO_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
+    SD_Error errorstatus = SD_OK;
+    u8 clkdiv = 0;
+    RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_DMA2, ENABLE ); //那1?邦GPIOC,GPIOD DMA2那㊣?車
+    RCC_APB2PeriphClockCmd( RCC_APB2Periph_SDIO, ENABLE ); //SDIO那㊣?車那1?邦
+    RCC_APB2PeriphResetCmd( RCC_APB2Periph_SDIO, ENABLE ); //SDIO?∩??
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12; //PC8,9,10,11,12?∩車?1|?邦那?3?
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//?∩車?1|?邦
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//100M
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//谷?角-
+    GPIO_Init( GPIOC, &GPIO_InitStructure ); // PC8,9,10,11,12?∩車?1|?邦那?3?
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_Init( GPIOD, &GPIO_InitStructure ); //PD2?∩車?1|?邦那?3?
+    //辰y???∩車?車3谷?谷豕??
+    GPIO_PinAFConfig( GPIOC, GPIO_PinSource8, GPIO_AF_SDIO ); //PC8,AF12
+    GPIO_PinAFConfig( GPIOC, GPIO_PinSource9, GPIO_AF_SDIO );
+    GPIO_PinAFConfig( GPIOC, GPIO_PinSource10, GPIO_AF_SDIO );
+    GPIO_PinAFConfig( GPIOC, GPIO_PinSource11, GPIO_AF_SDIO );
+    GPIO_PinAFConfig( GPIOC, GPIO_PinSource12, GPIO_AF_SDIO );
+    GPIO_PinAFConfig( GPIOD, GPIO_PinSource2, GPIO_AF_SDIO );
+    RCC_APB2PeriphResetCmd( RCC_APB2Periph_SDIO, DISABLE ); //SDIO?芍那??∩??
+    //SDIO赤a谷豕??∩??ˉ谷豕???a??豕??米
+    SDIO_Register_Deinit();
+    NVIC_InitStructure.NVIC_IRQChannel = SDIO_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; //?角??車??豕??3
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;    //℅車車??豕??3
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           //IRQ赤“米角那1?邦
+    NVIC_Init( &NVIC_InitStructure ); //?迄?Y???“米?2?那y3?那??‘VIC??∩??ˉ?⊿
+    errorstatus = SD_PowerON();       //SD?“谷?米?
+    if( errorstatus == SD_OK )
+    {
+        errorstatus = SD_InitializeCards();    //3?那??‘SD?“
+    }
+    if( errorstatus == SD_OK )
+    {
+        errorstatus = SD_GetCardInfo( &SDCardInfo );    //??豕??“D??⊿
+    }
+    if( errorstatus == SD_OK )
+    {
+        errorstatus = SD_SelectDeselect( ( u32 )( SDCardInfo.RCA << 16 ) );    //???DSD?“
+    }
+    if( errorstatus == SD_OK )
+    {
+        errorstatus = SD_EnableWideBusOperation( SDIO_BusWide_4b );    //4???赤?豕,豕?1?那?MMC?“,?辰2??邦車?4???㏒那?
+    }
+    if( ( errorstatus == SD_OK ) || ( SDIO_MULTIMEDIA_CARD == CardType ) )
+    {
+        if( SDCardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1 || SDCardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0 )
+        {
+            clkdiv = SDIO_TRANSFER_CLK_DIV + 2; //V1.1/V2.0?“㏒?谷豕??℅???48/4=12Mhz
+        }
+        else
+        {
+            clkdiv = SDIO_TRANSFER_CLK_DIV;    //SDHC米豕?????“㏒?谷豕??℅???48/2=24Mhz
+        }
+        SDIO_Clock_Set( clkdiv ); //谷豕??那㊣?車?米?那,SDIO那㊣?車????1?那?:SDIO_CK那㊣?車=SDIOCLK/[clkdiv+2];???D,SDIOCLK1足?“?a48Mhz
+        //errorstatus=SD_SetDeviceMode(SD_DMA_MODE);    //谷豕???aDMA?㏒那?
+        errorstatus = SD_SetDeviceMode( SD_POLLING_MODE ); //谷豕???a2谷?‘?㏒那?
+    }
+    return errorstatus;
+}
+//SDIO那㊣?車3?那??‘谷豕??
+//clkdiv:那㊣?車﹞??米?米那y
+//CK那㊣?車=SDIOCLK/[clkdiv+2];(SDIOCLK那㊣?車1足?“?a48Mhz)
+void SDIO_Clock_Set( u8 clkdiv )
+{
+    u32 tmpreg = SDIO->CLKCR;
+    tmpreg &= 0XFFFFFF00;
+    tmpreg |= clkdiv;
+    SDIO->CLKCR = tmpreg;
+}
+
+
+//?“谷?米?
+//2谷?‘?迄車DSDIO?車?迆谷?米??“谷豕㊣?,2⊿2谷?‘??米??1o赤????那㊣?車
+//﹞米???米:∩赤?車∩迆??;(0,?T∩赤?車)
+SD_Error SD_PowerON( void )
+{
+    u8 i = 0;
+    SD_Error errorstatus = SD_OK;
+    u32 response = 0, count = 0, validvoltage = 0;
+    u32 SDType = SD_STD_CAPACITY;
+    /*3?那??‘那㊣米?那㊣?車2??邦∩車車迆400KHz*/
+    SDIO_InitStructure.SDIO_ClockDiv = SDIO_INIT_CLK_DIV; /* HCLK = 72MHz, SDIOCLK = 72MHz, SDIO_CK = HCLK/(178 + 2) = 400 KHz */
+    SDIO_InitStructure.SDIO_ClockEdge = SDIO_ClockEdge_Rising;
+    SDIO_InitStructure.SDIO_ClockBypass = SDIO_ClockBypass_Disable;  //2?那1車?bypass?㏒那?㏒??㊣?車車?HCLK??DD﹞??米米?米?SDIO_CK
+    SDIO_InitStructure.SDIO_ClockPowerSave = SDIO_ClockPowerSave_Disable; // ???D那㊣2?1?㊣?那㊣?車米??∩
+    SDIO_InitStructure.SDIO_BusWide = SDIO_BusWide_1b;                    //1??那y?Y??
+    SDIO_InitStructure.SDIO_HardwareFlowControl = SDIO_HardwareFlowControl_Disable;//車2?t芍ˉ
+    SDIO_Init( &SDIO_InitStructure );
+    SDIO_SetPowerState( SDIO_PowerState_ON ); //谷?米?℅∩足?,?a???“那㊣?車
+    SDIO->CLKCR |= 1 << 8;        //SDIOCK那1?邦
+    for( i = 0; i < 74; i++ )
+    {
+        SDIO_CmdInitStructure.SDIO_Argument = 0x0;//﹞⊿?赤CMD0??豕?IDLE STAGE?㏒那??邦芍?.
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_GO_IDLE_STATE; //cmd0
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_No;  //?T?足車|
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;  //?辰CPSM?迆?a那?﹞⊿?赤?邦芍????～米豕∩y那y?Y∩?那??芍那??㏒
+        SDIO_SendCommand( &SDIO_CmdInitStructure );         //D∩?邦芍????邦芍???∩??ˉ
+        errorstatus = CmdError();
+        if( errorstatus == SD_OK )
+        {
+            break;
+        }
+    }
+    if( errorstatus )
+    {
+        return errorstatus;    //﹞米??∩赤?車℅∩足?
+    }
+    SDIO_CmdInitStructure.SDIO_Argument = SD_CHECK_PATTERN;   //﹞⊿?赤CMD8,?足?足車|,?足2谷SD?“?車?迆足?D?
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SDIO_SEND_IF_COND;  //cmd8
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;     //r7
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;            //1?㊣?米豕∩y?D??
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp7Error();                    //米豕∩yR7?足車|
+    if( errorstatus == SD_OK )                            //R7?足車|?y3㏒
+    {
+        CardType = SDIO_STD_CAPACITY_SD_CARD_V2_0;      //SD 2.0?“
+        SDType = SD_HIGH_CAPACITY;                      //??豕Y芍??“
+    }
+    SDIO_CmdInitStructure.SDIO_Argument = 0x00;//﹞⊿?赤CMD55,?足?足車|
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );   //﹞⊿?赤CMD55,?足?足車|
+    errorstatus = CmdResp1Error( SD_CMD_APP_CMD );        //米豕∩yR1?足車|
+    if( errorstatus == SD_OK ) //SD2.0/SD 1.1,﹞??辰?aMMC?“
+    {
+        //SD?“,﹞⊿?赤ACMD41 SD_APP_OP_COND,2?那y?a:0x80100000
+        while( ( !validvoltage ) && ( count < SD_MAX_VOLT_TRIAL ) )
+        {
+            SDIO_CmdInitStructure.SDIO_Argument = 0x00;//﹞⊿?赤CMD55,?足?足車|
+            SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;   //CMD55
+            SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+            SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+            SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+            SDIO_SendCommand( &SDIO_CmdInitStructure );       //﹞⊿?赤CMD55,?足?足車|
+            errorstatus = CmdResp1Error( SD_CMD_APP_CMD );    //米豕∩yR1?足車|
+            if( errorstatus != SD_OK )
+            {
+                return errorstatus;    //?足車|∩赤?車
+            }
+            //acmd41㏒??邦芍?2?那y車谷?∫3?米?米??1﹞??∫?～HCS??℅谷3谷㏒?HCS????辰?角∩??﹞??“那?SDSc?1那?sdhc
+            SDIO_CmdInitStructure.SDIO_Argument = SD_VOLTAGE_WINDOW_SD | SDType;  //﹞⊿?赤ACMD41,?足?足車|
+            SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SD_APP_OP_COND;
+            SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;  //r3
+            SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+            SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+            SDIO_SendCommand( &SDIO_CmdInitStructure );
+            errorstatus = CmdResp3Error();                //米豕∩yR3?足車|
+            if( errorstatus != SD_OK )
+            {
+                return errorstatus;    //?足車|∩赤?車
+            }
+            response = SDIO->RESP1;;                          //米?米??足車|
+            validvoltage = ( ( ( response >> 31 ) == 1 ) ? 1 : 0 ); //?D??SD?“谷?米?那?﹞?赤那3谷
+            count++;
+        }
+        if( count >= SD_MAX_VOLT_TRIAL )
+        {
+            errorstatus = SD_INVALID_VOLTRANGE;
+            return errorstatus;
+        }
+        if( response &= SD_HIGH_CAPACITY )
+        {
+            CardType = SDIO_HIGH_CAPACITY_SD_CARD;
+        }
+    }
+    return( errorstatus );
+}
+//SD?“ Power OFF
+//﹞米???米:∩赤?車∩迆??;(0,?T∩赤?車)
+SD_Error SD_PowerOFF( void )
+{
+    SDIO_SetPowerState( SDIO_PowerState_OFF ); //SDIO米??∩1?㊣?,那㊣?車赤㏒?1
+    return SD_OK;
+}
+//3?那??‘?迄車D米??“,2⊿豕??“??豕??赤Dˉ℅∩足?
+//﹞米???米:∩赤?車∩迆??
+SD_Error SD_InitializeCards( void )
+{
+    SD_Error errorstatus = SD_OK;
+    u16 rca = 0x01;
+    if( SDIO_GetPowerState() == SDIO_PowerState_OFF ) //?足2谷米??∩℅∩足?,豕﹞㊣㏒?a谷?米?℅∩足?
+    {
+        errorstatus = SD_REQUEST_NOT_APPLICABLE;
+        return( errorstatus );
+    }
+    if( SDIO_SECURE_DIGITAL_IO_CARD != CardType )     //﹞?SECURE_DIGITAL_IO_CARD
+    {
+        SDIO_CmdInitStructure.SDIO_Argument = 0x0;//﹞⊿?赤CMD2,豕?米?CID,3∟?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_ALL_SEND_CID;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Long;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure ); //﹞⊿?赤CMD2,豕?米?CID,3∟?足車|
+        errorstatus = CmdResp2Error();                  //米豕∩yR2?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+        CID_Tab[0] = SDIO->RESP1;
+        CID_Tab[1] = SDIO->RESP2;
+        CID_Tab[2] = SDIO->RESP3;
+        CID_Tab[3] = SDIO->RESP4;
+    }
+    if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_SECURE_DIGITAL_IO_COMBO_CARD == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) ) //?D???“角角D赤
+    {
+        SDIO_CmdInitStructure.SDIO_Argument = 0x00;//﹞⊿?赤CMD3,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_REL_ADDR;  //cmd3
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short; //r6
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure ); //﹞⊿?赤CMD3,?足?足車|
+        errorstatus = CmdResp6Error( SD_CMD_SET_REL_ADDR, &rca ); //米豕∩yR6?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+    }
+    if( SDIO_MULTIMEDIA_CARD == CardType )
+    {
+        SDIO_CmdInitStructure.SDIO_Argument = ( u32 )( rca << 16 ); //﹞⊿?赤CMD3,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_REL_ADDR;  //cmd3
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short; //r6
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure ); //﹞⊿?赤CMD3,?足?足車|
+        errorstatus = CmdResp2Error();                  //米豕∩yR2?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+    }
+    if( SDIO_SECURE_DIGITAL_IO_CARD != CardType )         //﹞?SECURE_DIGITAL_IO_CARD
+    {
+        RCA = rca;
+        SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t )( rca << 16 ); //﹞⊿?赤CMD9+?“RCA,豕?米?CSD,3∟?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SEND_CSD;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Long;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp2Error();                  //米豕∩yR2?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+        CSD_Tab[0] = SDIO->RESP1;
+        CSD_Tab[1] = SDIO->RESP2;
+        CSD_Tab[2] = SDIO->RESP3;
+        CSD_Tab[3] = SDIO->RESP4;
+    }
+    return SD_OK;//?“3?那??‘3谷1|
+}
+//米?米??“D??⊿
+//cardinfo:?“D??⊿∩?∩⊿??
+//﹞米???米:∩赤?車℅∩足?
+SD_Error SD_GetCardInfo( SD_CardInfo* cardinfo )
+{
+    SD_Error errorstatus = SD_OK;
+    u8 tmp = 0;
+    cardinfo->CardType = ( u8 )CardType;          //?“角角D赤
+    cardinfo->RCA = ( u16 )RCA;                       //?“RCA?米
+    tmp = ( u8 )( ( CSD_Tab[0] & 0xFF000000 ) >> 24 );
+    cardinfo->SD_csd.CSDStruct = ( tmp & 0xC0 ) >> 6; //CSD?芍11
+    cardinfo->SD_csd.SysSpecVersion = ( tmp & 0x3C ) >> 2; //2.0D-辰谷?1???“辰??a2?﹞?(?a㊣㏒芍?),車|??那?o車D?D-辰谷?“辰?米?
+    cardinfo->SD_csd.Reserved1 = tmp & 0x03;      //2??㊣㏒芍???
+    tmp = ( u8 )( ( CSD_Tab[0] & 0x00FF0000 ) >> 16 ); //米迆1??℅??迆
+    cardinfo->SD_csd.TAAC = tmp;                      //那y?Y?芍那㊣??1
+    tmp = ( u8 )( ( CSD_Tab[0] & 0x0000FF00 ) >> 8 ); //米迆2??℅??迆
+    cardinfo->SD_csd.NSAC = tmp;                      //那y?Y?芍那㊣??2
+    tmp = ( u8 )( CSD_Tab[0] & 0x000000FF );      //米迆3??℅??迆
+    cardinfo->SD_csd.MaxBusClkFrec = tmp;             //∩?那??迄?豕
+    tmp = ( u8 )( ( CSD_Tab[1] & 0xFF000000 ) >> 24 ); //米迆4??℅??迆
+    cardinfo->SD_csd.CardComdClasses = tmp << 4;  //?“??芍?角角??????
+    tmp = ( u8 )( ( CSD_Tab[1] & 0x00FF0000 ) >> 16 ); //米迆5??℅??迆
+    cardinfo->SD_csd.CardComdClasses |= ( tmp & 0xF0 ) >> 4; //?“??芍?角角米赤????
+    cardinfo->SD_csd.RdBlockLen = tmp & 0x0F;     //℅?∩車?芍豕?那y?Y3∟?豕
+    tmp = ( u8 )( ( CSD_Tab[1] & 0x0000FF00 ) >> 8 ); //米迆6??℅??迆
+    cardinfo->SD_csd.PartBlockRead = ( tmp & 0x80 ) >> 7; //?那D赤﹞??谷?芍
+    cardinfo->SD_csd.WrBlockMisalign = ( tmp & 0x40 ) >> 6; //D∩?谷∩赤??
+    cardinfo->SD_csd.RdBlockMisalign = ( tmp & 0x20 ) >> 5; //?芍?谷∩赤??
+    cardinfo->SD_csd.DSRImpl = ( tmp & 0x10 ) >> 4;
+    cardinfo->SD_csd.Reserved2 = 0;                   //㊣㏒芍?
+    if( ( CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1 ) || ( CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0 ) || ( SDIO_MULTIMEDIA_CARD == CardType ) ) //㊣那℅?1.1/2.0?“/MMC?“
+    {
+        cardinfo->SD_csd.DeviceSize = ( tmp & 0x03 ) << 10; //C_SIZE(12??)
+        tmp = ( u8 )( CSD_Tab[1] & 0x000000FF );    //米迆7??℅??迆
+        cardinfo->SD_csd.DeviceSize |= ( tmp ) << 2;
+        tmp = ( u8 )( ( CSD_Tab[2] & 0xFF000000 ) >> 24 ); //米迆8??℅??迆
+        cardinfo->SD_csd.DeviceSize |= ( tmp & 0xC0 ) >> 6;
+        cardinfo->SD_csd.MaxRdCurrentVDDMin = ( tmp & 0x38 ) >> 3;
+        cardinfo->SD_csd.MaxRdCurrentVDDMax = ( tmp & 0x07 );
+        tmp = ( u8 )( ( CSD_Tab[2] & 0x00FF0000 ) >> 16 ); //米迆9??℅??迆
+        cardinfo->SD_csd.MaxWrCurrentVDDMin = ( tmp & 0xE0 ) >> 5;
+        cardinfo->SD_csd.MaxWrCurrentVDDMax = ( tmp & 0x1C ) >> 2;
+        cardinfo->SD_csd.DeviceSizeMul = ( tmp & 0x03 ) << 1; //C_SIZE_MULT
+        tmp = ( u8 )( ( CSD_Tab[2] & 0x0000FF00 ) >> 8 ); //米迆10??℅??迆
+        cardinfo->SD_csd.DeviceSizeMul |= ( tmp & 0x80 ) >> 7;
+        cardinfo->CardCapacity = ( cardinfo->SD_csd.DeviceSize + 1 ); //?????“豕Y芍?
+        cardinfo->CardCapacity *= ( 1 << ( cardinfo->SD_csd.DeviceSizeMul + 2 ) );
+        cardinfo->CardBlockSize = 1 << ( cardinfo->SD_csd.RdBlockLen ); //?谷∩車D?
+        cardinfo->CardCapacity *= cardinfo->CardBlockSize;
+    }
+    else if( CardType == SDIO_HIGH_CAPACITY_SD_CARD ) //??豕Y芍??“
+    {
+        tmp = ( u8 )( CSD_Tab[1] & 0x000000FF ); //米迆7??℅??迆
+        cardinfo->SD_csd.DeviceSize = ( tmp & 0x3F ) << 16; //C_SIZE
+        tmp = ( u8 )( ( CSD_Tab[2] & 0xFF000000 ) >> 24 ); //米迆8??℅??迆
+        cardinfo->SD_csd.DeviceSize |= ( tmp << 8 );
+        tmp = ( u8 )( ( CSD_Tab[2] & 0x00FF0000 ) >> 16 ); //米迆9??℅??迆
+        cardinfo->SD_csd.DeviceSize |= ( tmp );
+        tmp = ( u8 )( ( CSD_Tab[2] & 0x0000FF00 ) >> 8 ); //米迆10??℅??迆
+        cardinfo->CardCapacity = ( long long )( cardinfo->SD_csd.DeviceSize + 1 ) * 512 * 1024; //?????“豕Y芍?
+        cardinfo->CardBlockSize = 512;          //?谷∩車D?1足?“?a512℅??迆
+    }
+    cardinfo->SD_csd.EraseGrSize = ( tmp & 0x40 ) >> 6;
+    cardinfo->SD_csd.EraseGrMul = ( tmp & 0x3F ) << 1;
+    tmp = ( u8 )( CSD_Tab[2] & 0x000000FF );  //米迆11??℅??迆
+    cardinfo->SD_csd.EraseGrMul |= ( tmp & 0x80 ) >> 7;
+    cardinfo->SD_csd.WrProtectGrSize = ( tmp & 0x7F );
+    tmp = ( u8 )( ( CSD_Tab[3] & 0xFF000000 ) >> 24 ); //米迆12??℅??迆
+    cardinfo->SD_csd.WrProtectGrEnable = ( tmp & 0x80 ) >> 7;
+    cardinfo->SD_csd.ManDeflECC = ( tmp & 0x60 ) >> 5;
+    cardinfo->SD_csd.WrSpeedFact = ( tmp & 0x1C ) >> 2;
+    cardinfo->SD_csd.MaxWrBlockLen = ( tmp & 0x03 ) << 2;
+    tmp = ( u8 )( ( CSD_Tab[3] & 0x00FF0000 ) >> 16 ); //米迆13??℅??迆
+    cardinfo->SD_csd.MaxWrBlockLen |= ( tmp & 0xC0 ) >> 6;
+    cardinfo->SD_csd.WriteBlockPaPartial = ( tmp & 0x20 ) >> 5;
+    cardinfo->SD_csd.Reserved3 = 0;
+    cardinfo->SD_csd.ContentProtectAppli = ( tmp & 0x01 );
+    tmp = ( u8 )( ( CSD_Tab[3] & 0x0000FF00 ) >> 8 ); //米迆14??℅??迆
+    cardinfo->SD_csd.FileFormatGrouop = ( tmp & 0x80 ) >> 7;
+    cardinfo->SD_csd.CopyFlag = ( tmp & 0x40 ) >> 6;
+    cardinfo->SD_csd.PermWrProtect = ( tmp & 0x20 ) >> 5;
+    cardinfo->SD_csd.TempWrProtect = ( tmp & 0x10 ) >> 4;
+    cardinfo->SD_csd.FileFormat = ( tmp & 0x0C ) >> 2;
+    cardinfo->SD_csd.ECC = ( tmp & 0x03 );
+    tmp = ( u8 )( CSD_Tab[3] & 0x000000FF );  //米迆15??℅??迆
+    cardinfo->SD_csd.CSD_CRC = ( tmp & 0xFE ) >> 1;
+    cardinfo->SD_csd.Reserved4 = 1;
+    tmp = ( u8 )( ( CID_Tab[0] & 0xFF000000 ) >> 24 ); //米迆0??℅??迆
+    cardinfo->SD_cid.ManufacturerID = tmp;
+    tmp = ( u8 )( ( CID_Tab[0] & 0x00FF0000 ) >> 16 ); //米迆1??℅??迆
+    cardinfo->SD_cid.OEM_AppliID = tmp << 8;
+    tmp = ( u8 )( ( CID_Tab[0] & 0x000000FF00 ) >> 8 ); //米迆2??℅??迆
+    cardinfo->SD_cid.OEM_AppliID |= tmp;
+    tmp = ( u8 )( CID_Tab[0] & 0x000000FF );  //米迆3??℅??迆
+    cardinfo->SD_cid.ProdName1 = tmp << 24;
+    tmp = ( u8 )( ( CID_Tab[1] & 0xFF000000 ) >> 24 ); //米迆4??℅??迆
+    cardinfo->SD_cid.ProdName1 |= tmp << 16;
+    tmp = ( u8 )( ( CID_Tab[1] & 0x00FF0000 ) >> 16 ); //米迆5??℅??迆
+    cardinfo->SD_cid.ProdName1 |= tmp << 8;
+    tmp = ( u8 )( ( CID_Tab[1] & 0x0000FF00 ) >> 8 ); //米迆6??℅??迆
+    cardinfo->SD_cid.ProdName1 |= tmp;
+    tmp = ( u8 )( CID_Tab[1] & 0x000000FF );  //米迆7??℅??迆
+    cardinfo->SD_cid.ProdName2 = tmp;
+    tmp = ( u8 )( ( CID_Tab[2] & 0xFF000000 ) >> 24 ); //米迆8??℅??迆
+    cardinfo->SD_cid.ProdRev = tmp;
+    tmp = ( u8 )( ( CID_Tab[2] & 0x00FF0000 ) >> 16 ); //米迆9??℅??迆
+    cardinfo->SD_cid.ProdSN = tmp << 24;
+    tmp = ( u8 )( ( CID_Tab[2] & 0x0000FF00 ) >> 8 ); //米迆10??℅??迆
+    cardinfo->SD_cid.ProdSN |= tmp << 16;
+    tmp = ( u8 )( CID_Tab[2] & 0x000000FF );      //米迆11??℅??迆
+    cardinfo->SD_cid.ProdSN |= tmp << 8;
+    tmp = ( u8 )( ( CID_Tab[3] & 0xFF000000 ) >> 24 ); //米迆12??℅??迆
+    cardinfo->SD_cid.ProdSN |= tmp;
+    tmp = ( u8 )( ( CID_Tab[3] & 0x00FF0000 ) >> 16 ); //米迆13??℅??迆
+    cardinfo->SD_cid.Reserved1 |= ( tmp & 0xF0 ) >> 4;
+    cardinfo->SD_cid.ManufactDate = ( tmp & 0x0F ) << 8;
+    tmp = ( u8 )( ( CID_Tab[3] & 0x0000FF00 ) >> 8 ); //米迆14??℅??迆
+    cardinfo->SD_cid.ManufactDate |= tmp;
+    tmp = ( u8 )( CID_Tab[3] & 0x000000FF );  //米迆15??℅??迆
+    cardinfo->SD_cid.CID_CRC = ( tmp & 0xFE ) >> 1;
+    cardinfo->SD_cid.Reserved2 = 1;
+    return errorstatus;
+}
+//谷豕??SDIO℅邦???赤?豕(MMC?“2??∫3?4bit?㏒那?)
+//wmode:???赤?㏒那?.0,1??那y?Y?赤?豕;1,4??那y?Y?赤?豕;2,8??那y?Y?赤?豕
+//﹞米???米:SD?“∩赤?車℅∩足?
+
+//谷豕??SDIO℅邦???赤?豕(MMC?“2??∫3?4bit?㏒那?)
+//   @arg SDIO_BusWide_8b: 8-bit data transfer (Only for MMC)
+//   @arg SDIO_BusWide_4b: 4-bit data transfer
+//   @arg SDIO_BusWide_1b: 1-bit data transfer (??豕?)
+//﹞米???米:SD?“∩赤?車℅∩足?
+
+
+SD_Error SD_EnableWideBusOperation( u32 WideMode )
+{
+    SD_Error errorstatus = SD_OK;
+    if( SDIO_MULTIMEDIA_CARD == CardType )
+    {
+        errorstatus = SD_UNSUPPORTED_FEATURE;
+        return( errorstatus );
+    }
+    else if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) )
+    {
+        if( SDIO_BusWide_8b == WideMode )  //2.0 sd2??∫3?8bits
+        {
+            errorstatus = SD_UNSUPPORTED_FEATURE;
+            return( errorstatus );
+        }
+        else
+        {
+            errorstatus = SDEnWideBus( WideMode );
+            if( SD_OK == errorstatus )
+            {
+                SDIO->CLKCR &= ~( 3 << 11 ); //??3y???～米????赤谷豕??
+                SDIO->CLKCR |= WideMode; //1??/4??℅邦???赤?豕
+                SDIO->CLKCR |= 0 << 14;     //2??a??車2?t芍ˉ????
+            }
+        }
+    }
+    return errorstatus;
+}
+//谷豕??SD?“1∟℅ˉ?㏒那?
+//Mode:
+//﹞米???米:∩赤?車℅∩足?
+SD_Error SD_SetDeviceMode( u32 Mode )
+{
+    SD_Error errorstatus = SD_OK;
+    if( ( Mode == SD_DMA_MODE ) || ( Mode == SD_POLLING_MODE ) )
+    {
+        DeviceMode = Mode;
+    }
+    else
+    {
+        errorstatus = SD_INVALID_PARAMETER;
+    }
+    return errorstatus;
+}
+//???“
+//﹞⊿?赤CMD7,?????角??米??﹞(rca)?aaddr米??“,豕????????“.豕?1??a0,?辰??2?????.
+//addr:?“米?RCA米??﹞
+SD_Error SD_SelectDeselect( u32 addr )
+{
+    SDIO_CmdInitStructure.SDIO_Argument =  addr;//﹞⊿?赤CMD7,?????“,?足?足車|
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SEL_DESEL_CARD;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure ); //﹞⊿?赤CMD7,?????“,?足?足車|
+    return CmdResp1Error( SD_CMD_SEL_DESEL_CARD );
+}
+//SD?“?芍豕?辰????谷
+//buf:?芍那y?Y?o∩???(㊣?D?4℅??迆????!!)
+//addr:?芍豕?米??﹞
+//blksize:?谷∩車D?
+SD_Error SD_ReadBlock( u8* buf, long long addr, u16 blksize )
+{
+    SD_Error errorstatus = SD_OK;
+    u8 power;
+    u32 count = 0, *tempbuff = ( u32* )buf; //℅a???au32????
+    u32 timeout = SDIO_DATATIMEOUT;
+    if( NULL == buf )
+    {
+        return SD_INVALID_PARAMETER;
+    }
+    SDIO->DCTRL = 0x0; //那y?Y??????∩??ˉ??芍?(1?DMA)
+    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD ) //∩車豕Y芍??“
+    {
+        blksize = 512;
+        addr >>= 9;
+    }
+    SDIO_DataInitStructure.SDIO_DataBlockSize = SDIO_DataBlockSize_1b ; //??3yDPSM℅∩足??迆????
+    SDIO_DataInitStructure.SDIO_DataLength = 0 ;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    if( SDIO->RESP1 & SD_CARD_LOCKED )
+    {
+        return SD_LOCK_UNLOCK_FAILED;    //?“??芍?
+    }
+    if( ( blksize > 0 ) && ( blksize <= 2048 ) && ( ( blksize & ( blksize - 1 ) ) == 0 ) )
+    {
+        power = convert_from_bytes_to_power_of_two( blksize );
+        SDIO_CmdInitStructure.SDIO_Argument =  blksize;
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure ); //﹞⊿?赤CMD16+谷豕??那y?Y3∟?豕?ablksize,?足?足車|
+        errorstatus = CmdResp1Error( SD_CMD_SET_BLOCKLEN ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+    }
+    else
+    {
+        return SD_INVALID_PARAMETER;
+    }
+    SDIO_DataInitStructure.SDIO_DataBlockSize = power << 4 ; //??3yDPSM℅∩足??迆????
+    SDIO_DataInitStructure.SDIO_DataLength = blksize ;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToSDIO;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    SDIO_CmdInitStructure.SDIO_Argument =  addr;
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_READ_SINGLE_BLOCK;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure ); //﹞⊿?赤CMD17+∩車addr米??﹞3??芍豕?那y?Y,?足?足車|
+    errorstatus = CmdResp1Error( SD_CMD_READ_SINGLE_BLOCK ); //米豕∩yR1?足車|
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;    //?足車|∩赤?車
+    }
+    if( DeviceMode == SD_POLLING_MODE )                   //2谷?‘?㏒那?,???‘那y?Y
+    {
+        INTX_DISABLE();//1?㊣?℅邦?D??(POLLING?㏒那?,?????D??∩辰??SDIO?芍D∩2迄℅ˉ!!!)
+        while( !( SDIO->STA & ( ( 1 << 5 ) | ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 10 ) | ( 1 << 9 ) ) ) ) //?T谷?辰?/CRC/3?那㊣/赤那3谷(㊣那??)/?e那???∩赤?車
+        {
+            if( SDIO_GetFlagStatus( SDIO_FLAG_RXFIFOHF ) != RESET )                   //?車那???～??迆,㊣赤那??芍谷迄∩?芍?8??℅?
+            {
+                for( count = 0; count < 8; count++ )    //?-?﹞?芍豕?那y?Y
+                {
+                    *( tempbuff + count ) = SDIO->FIFO;
+                }
+                tempbuff += 8;
+                timeout = 0X7FFFFF; //?芍那y?Y辰?3?那㊣??
+            }
+            else      //∩|角赤3?那㊣
+            {
+                if( timeout == 0 )
+                {
+                    return SD_DATA_TIMEOUT;
+                }
+                timeout--;
+            }
+        }
+        if( SDIO_GetFlagStatus( SDIO_FLAG_DTIMEOUT ) != RESET ) //那y?Y3?那㊣∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_DTIMEOUT ); //??∩赤?車㊣那??
+            return SD_DATA_TIMEOUT;
+        }
+        else if( SDIO_GetFlagStatus( SDIO_FLAG_DCRCFAIL ) != RESET ) //那y?Y?谷CRC∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_DCRCFAIL );     //??∩赤?車㊣那??
+            return SD_DATA_CRC_FAIL;
+        }
+        else if( SDIO_GetFlagStatus( SDIO_FLAG_RXOVERR ) != RESET ) //?車那?fifo谷?辰?∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_RXOVERR );      //??∩赤?車㊣那??
+            return SD_RX_OVERRUN;
+        }
+        else if( SDIO_GetFlagStatus( SDIO_FLAG_STBITERR ) != RESET ) //?車那??e那???∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_STBITERR ); //??∩赤?車㊣那??
+            return SD_START_BIT_ERR;
+        }
+        while( SDIO_GetFlagStatus( SDIO_FLAG_RXDAVL ) != RESET ) //FIFO角???,?1∩??迆?谷車?那y?Y
+        {
+            *tempbuff = SDIO->FIFO; //?-?﹞?芍豕?那y?Y
+            tempbuff++;
+        }
+        INTX_ENABLE();//?a??℅邦?D??
+        SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    }
+    else if( DeviceMode == SD_DMA_MODE )
+    {
+        TransferError = SD_OK;
+        StopCondition = 0;          //米ㄓ?谷?芍,2?D豕辰a﹞⊿?赤赤㏒?1∩?那???芍?
+        TransferEnd = 0;            //∩?那??芍那?㊣那????㏒??迆?D??﹞t????1
+        SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 5 ) | ( 1 << 9 ); //????D豕辰a米??D??
+        SDIO->DCTRL |= 1 << 3;      //SDIO DMA那1?邦
+        SD_DMA_Config( ( u32* )buf, blksize, DMA_DIR_PeripheralToMemory );
+        while( ( ( DMA2->LISR & ( 1 << 27 ) ) == RESET ) && ( TransferEnd == 0 ) && ( TransferError == SD_OK ) && timeout )
+        {
+            timeout--;    //米豕∩y∩?那?赤那3谷
+        }
+        if( timeout == 0 )
+        {
+            return SD_DATA_TIMEOUT;    //3?那㊣
+        }
+        if( TransferError != SD_OK )
+        {
+            errorstatus = TransferError;
+        }
+    }
+    return errorstatus;
+}
+//SD?“?芍豕??角???谷
+//buf:?芍那y?Y?o∩???
+//addr:?芍豕?米??﹞
+//blksize:?谷∩車D?
+//nblks:辰a?芍豕?米??谷那y
+//﹞米???米:∩赤?車℅∩足?
+#pragma pack(push,4)
+__no_init u32* tempbuff;
+SD_Error SD_ReadMultiBlocks( u8* buf, long long addr, u16 blksize, u32 nblks )
+{
+    SD_Error errorstatus = SD_OK;
+    u8 power;
+    u32 count = 0;
+    u32 timeout = SDIO_DATATIMEOUT;
+    tempbuff = ( u32* )buf; //℅a???au32????
+    SDIO->DCTRL = 0x0;    //那y?Y??????∩??ˉ??芍?(1?DMA)
+    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD ) //∩車豕Y芍??“
+    {
+        blksize = 512;
+        addr >>= 9;
+    }
+    SDIO_DataInitStructure.SDIO_DataBlockSize = 0; ; //??3yDPSM℅∩足??迆????
+    SDIO_DataInitStructure.SDIO_DataLength = 0 ;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    if( SDIO->RESP1 & SD_CARD_LOCKED )
+    {
+        return SD_LOCK_UNLOCK_FAILED;    //?“??芍?
+    }
+    if( ( blksize > 0 ) && ( blksize <= 2048 ) && ( ( blksize & ( blksize - 1 ) ) == 0 ) )
+    {
+        power = convert_from_bytes_to_power_of_two( blksize );
+        SDIO_CmdInitStructure.SDIO_Argument =  blksize;//﹞⊿?赤CMD16+谷豕??那y?Y3∟?豕?ablksize,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_SET_BLOCKLEN ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+    }
+    else
+    {
+        return SD_INVALID_PARAMETER;
+    }
+    if( nblks > 1 )                                       //?角?谷?芍
+    {
+        if( nblks * blksize > SD_MAX_DATA_LENGTH )
+        {
+            return SD_INVALID_PARAMETER;    //?D??那?﹞?3?1y℅?∩車?車那?3∟?豕
+        }
+        SDIO_DataInitStructure.SDIO_DataBlockSize = power << 4; ; //nblks*blksize,512?谷∩車D?,?“米??????ˉ
+        SDIO_DataInitStructure.SDIO_DataLength = nblks * blksize ;
+        SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+        SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+        SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToSDIO;
+        SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+        SDIO_DataConfig( &SDIO_DataInitStructure );
+        SDIO_CmdInitStructure.SDIO_Argument =  addr;//﹞⊿?赤CMD18+∩車addr米??﹞3??芍豕?那y?Y,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_READ_MULT_BLOCK;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_READ_MULT_BLOCK ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+        if( DeviceMode == SD_POLLING_MODE )
+        {
+            INTX_DISABLE();//1?㊣?℅邦?D??(POLLING?㏒那?,?????D??∩辰??SDIO?芍D∩2迄℅ˉ!!!)
+            while( !( SDIO->STA & ( ( 1 << 5 ) | ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 9 ) ) ) ) //?T谷?辰?/CRC/3?那㊣/赤那3谷(㊣那??)/?e那???∩赤?車
+            {
+                if( SDIO_GetFlagStatus( SDIO_FLAG_RXFIFOHF ) != RESET )                 //?車那???～??迆,㊣赤那??芍谷迄∩?芍?8??℅?
+                {
+                    for( count = 0; count < 8; count++ )  //?-?﹞?芍豕?那y?Y
+                    {
+                        *( tempbuff + count ) = SDIO->FIFO;
+                    }
+                    tempbuff += 8;
+                    timeout = 0X7FFFFF;   //?芍那y?Y辰?3?那㊣??
+                }
+                else    //∩|角赤3?那㊣
+                {
+                    if( timeout == 0 )
+                    {
+                        return SD_DATA_TIMEOUT;
+                    }
+                    timeout--;
+                }
+            }
+            if( SDIO_GetFlagStatus( SDIO_FLAG_DTIMEOUT ) != RESET )   //那y?Y3?那㊣∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_DTIMEOUT );   //??∩赤?車㊣那??
+                return SD_DATA_TIMEOUT;
+            }
+            else if( SDIO_GetFlagStatus( SDIO_FLAG_DCRCFAIL ) != RESET ) //那y?Y?谷CRC∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_DCRCFAIL );       //??∩赤?車㊣那??
+                return SD_DATA_CRC_FAIL;
+            }
+            else if( SDIO_GetFlagStatus( SDIO_FLAG_RXOVERR ) != RESET ) //?車那?fifo谷?辰?∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_RXOVERR );    //??∩赤?車㊣那??
+                return SD_RX_OVERRUN;
+            }
+            else if( SDIO_GetFlagStatus( SDIO_FLAG_STBITERR ) != RESET )  //?車那??e那???∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_STBITERR ); //??∩赤?車㊣那??
+                return SD_START_BIT_ERR;
+            }
+            while( SDIO_GetFlagStatus( SDIO_FLAG_RXDAVL ) != RESET ) //FIFO角???,?1∩??迆?谷車?那y?Y
+            {
+                *tempbuff = SDIO->FIFO; //?-?﹞?芍豕?那y?Y
+                tempbuff++;
+            }
+            if( SDIO_GetFlagStatus( SDIO_FLAG_DATAEND ) != RESET )    //?車那??芍那?
+            {
+                if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) )
+                {
+                    SDIO_CmdInitStructure.SDIO_Argument =  0;//﹞⊿?赤CMD12+?芍那?∩?那?
+                    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_STOP_TRANSMISSION;
+                    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+                    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+                    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+                    SDIO_SendCommand( &SDIO_CmdInitStructure );
+                    errorstatus = CmdResp1Error( SD_CMD_STOP_TRANSMISSION ); //米豕∩yR1?足車|
+                    if( errorstatus != SD_OK )
+                    {
+                        return errorstatus;
+                    }
+                }
+            }
+            INTX_ENABLE();//?a??℅邦?D??
+            SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+        }
+        else if( DeviceMode == SD_DMA_MODE )
+        {
+            TransferError = SD_OK;
+            StopCondition = 1;        //?角?谷?芍,D豕辰a﹞⊿?赤赤㏒?1∩?那???芍?
+            TransferEnd = 0;              //∩?那??芍那?㊣那????㏒??迆?D??﹞t????1
+            SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 5 ) | ( 1 << 9 ); //????D豕辰a米??D??
+            SDIO->DCTRL |= 1 << 3;                            //SDIO DMA那1?邦
+            SD_DMA_Config( ( u32* )buf, nblks * blksize, DMA_DIR_PeripheralToMemory );
+            while( ( ( DMA2->LISR & ( 1 << 27 ) ) == RESET ) && timeout )
+            {
+                timeout--;    //米豕∩y∩?那?赤那3谷
+            }
+            if( timeout == 0 )
+            {
+                return SD_DATA_TIMEOUT;    //3?那㊣
+            }
+            while( ( TransferEnd == 0 ) && ( TransferError == SD_OK ) );
+            if( TransferError != SD_OK )
+            {
+                errorstatus = TransferError;
+            }
+        }
+    }
+    return errorstatus;
+}
+//SD?“D∩1???谷
+//buf:那y?Y?o∩???
+//addr:D∩米??﹞
+//blksize:?谷∩車D?
+//﹞米???米:∩赤?車℅∩足?
+SD_Error SD_WriteBlock( u8* buf, long long addr,  u16 blksize )
+{
+    SD_Error errorstatus = SD_OK;
+    u8  power = 0, cardstate = 0;
+    u32 timeout = 0, bytestransferred = 0;
+    u32 cardstatus = 0, count = 0, restwords = 0;
+    u32   tlen = blksize;                     //℅邦3∟?豕(℅??迆)
+    u32* tempbuff = ( u32* )buf;
+    if( buf == NULL )
+    {
+        return SD_INVALID_PARAMETER;    //2?那y∩赤?車
+    }
+    SDIO->DCTRL = 0x0;                        //那y?Y??????∩??ˉ??芍?(1?DMA)
+    SDIO_DataInitStructure.SDIO_DataBlockSize = 0; ; //??3yDPSM℅∩足??迆????
+    SDIO_DataInitStructure.SDIO_DataLength = 0 ;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    if( SDIO->RESP1 & SD_CARD_LOCKED )
+    {
+        return SD_LOCK_UNLOCK_FAILED;    //?“??芍?
+    }
+    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD ) //∩車豕Y芍??“
+    {
+        blksize = 512;
+        addr >>= 9;
+    }
+    if( ( blksize > 0 ) && ( blksize <= 2048 ) && ( ( blksize & ( blksize - 1 ) ) == 0 ) )
+    {
+        power = convert_from_bytes_to_power_of_two( blksize );
+        SDIO_CmdInitStructure.SDIO_Argument = blksize;//﹞⊿?赤CMD16+谷豕??那y?Y3∟?豕?ablksize,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_SET_BLOCKLEN ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+    }
+    else
+    {
+        return SD_INVALID_PARAMETER;
+    }
+    SDIO_CmdInitStructure.SDIO_Argument = ( u32 )RCA << 16; //﹞⊿?赤CMD13,2谷?‘?“米?℅∩足?,?足?足車|
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SEND_STATUS;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp1Error( SD_CMD_SEND_STATUS );    //米豕∩yR1?足車|
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    cardstatus = SDIO->RESP1;
+    timeout = SD_DATATIMEOUT;
+    while( ( ( cardstatus & 0x00000100 ) == 0 ) && ( timeout > 0 ) ) //?足2谷READY_FOR_DATA??那?﹞?????
+    {
+        timeout--;
+        SDIO_CmdInitStructure.SDIO_Argument = ( u32 )RCA << 16; //﹞⊿?赤CMD13,2谷?‘?“米?℅∩足?,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SEND_STATUS;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_SEND_STATUS ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;
+        }
+        cardstatus = SDIO->RESP1;
+    }
+    if( timeout == 0 )
+    {
+        return SD_ERROR;
+    }
+    SDIO_CmdInitStructure.SDIO_Argument = addr;//﹞⊿?赤CMD24,D∩米ㄓ?谷??芍?,?足?足車|
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_WRITE_SINGLE_BLOCK;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp1Error( SD_CMD_WRITE_SINGLE_BLOCK ); //米豕∩yR1?足車|
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    StopCondition = 0;                                //米ㄓ?谷D∩,2?D豕辰a﹞⊿?赤赤㏒?1∩?那???芍?
+    SDIO_DataInitStructure.SDIO_DataBlockSize = power << 4; ; //blksize, ?????ˉ米??“
+    SDIO_DataInitStructure.SDIO_DataLength = blksize ;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    timeout = SDIO_DATATIMEOUT;
+    if( DeviceMode == SD_POLLING_MODE )
+    {
+        INTX_DISABLE();//1?㊣?℅邦?D??(POLLING?㏒那?,?????D??∩辰??SDIO?芍D∩2迄℅ˉ!!!)
+        while( !( SDIO->STA & ( ( 1 << 10 ) | ( 1 << 4 ) | ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 9 ) ) ) ) //那y?Y?谷﹞⊿?赤3谷1|/??辰?/CRC/3?那㊣/?e那???∩赤?車
+        {
+            if( SDIO_GetFlagStatus( SDIO_FLAG_TXFIFOHE ) != RESET )                       //﹞⊿?赤??～???,㊣赤那??芍谷迄∩?芍?8??℅?
+            {
+                if( ( tlen - bytestransferred ) < SD_HALFFIFOBYTES ) //2?1?32℅??迆芍?
+                {
+                    restwords = ( ( tlen - bytestransferred ) % 4 == 0 ) ? ( ( tlen - bytestransferred ) / 4 ) : ( ( tlen - bytestransferred ) / 4 + 1 );
+                    for( count = 0; count < restwords; count++, tempbuff++, bytestransferred += 4 )
+                    {
+                        SDIO->FIFO = *tempbuff;
+                    }
+                }
+                else
+                {
+                    for( count = 0; count < 8; count++ )
+                    {
+                        SDIO->FIFO = *( tempbuff + count );
+                    }
+                    tempbuff += 8;
+                    bytestransferred += 32;
+                }
+                timeout = 0X3FFFFFFF; //D∩那y?Y辰?3?那㊣??
+            }
+            else
+            {
+                if( timeout == 0 )
+                {
+                    return SD_DATA_TIMEOUT;
+                }
+                timeout--;
+            }
+        }
+        if( SDIO_GetFlagStatus( SDIO_FLAG_DTIMEOUT ) != RESET ) //那y?Y3?那㊣∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_DTIMEOUT ); //??∩赤?車㊣那??
+            return SD_DATA_TIMEOUT;
+        }
+        else if( SDIO_GetFlagStatus( SDIO_FLAG_DCRCFAIL ) != RESET ) //那y?Y?谷CRC∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_DCRCFAIL );     //??∩赤?車㊣那??
+            return SD_DATA_CRC_FAIL;
+        }
+        else if( SDIO_GetFlagStatus( SDIO_FLAG_TXUNDERR ) != RESET ) //?車那?fifo??辰?∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_TXUNDERR );     //??∩赤?車㊣那??
+            return SD_TX_UNDERRUN;
+        }
+        else if( SDIO_GetFlagStatus( SDIO_FLAG_STBITERR ) != RESET ) //?車那??e那???∩赤?車
+        {
+            SDIO_ClearFlag( SDIO_FLAG_STBITERR ); //??∩赤?車㊣那??
+            return SD_START_BIT_ERR;
+        }
+        INTX_ENABLE();//?a??℅邦?D??
+        SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    }
+    else if( DeviceMode == SD_DMA_MODE )
+    {
+        TransferError = SD_OK;
+        StopCondition = 0;          //米ㄓ?谷D∩,2?D豕辰a﹞⊿?赤赤㏒?1∩?那???芍?
+        TransferEnd = 0;            //∩?那??芍那?㊣那????㏒??迆?D??﹞t????1
+        SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 4 ) | ( 1 << 9 ); //????2迆谷迆那y?Y?車那?赤那3谷?D??
+        SD_DMA_Config( ( u32* )buf, blksize, DMA_DIR_MemoryToPeripheral );          //SDIO DMA????
+        SDIO->DCTRL |= 1 << 3;                          //SDIO DMA那1?邦.
+        while( ( ( DMA2->LISR & ( 1 << 27 ) ) == RESET ) && timeout )
+        {
+            timeout--;    //米豕∩y∩?那?赤那3谷
+        }
+        if( timeout == 0 )
+        {
+            SD_Init();                        //??D?3?那??‘SD?“,?谷辰??a??D∩豕??角?迆米??那足a
+            return SD_DATA_TIMEOUT;           //3?那㊣
+        }
+        timeout = SDIO_DATATIMEOUT;
+        while( ( TransferEnd == 0 ) && ( TransferError == SD_OK ) && timeout )
+        {
+            timeout--;
+        }
+        if( timeout == 0 )
+        {
+            return SD_DATA_TIMEOUT;    //3?那㊣
+        }
+        if( TransferError != SD_OK )
+        {
+            return TransferError;
+        }
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    errorstatus = IsCardProgramming( &cardstate );
+    while( ( errorstatus == SD_OK ) && ( ( cardstate == SD_CARD_PROGRAMMING ) || ( cardstate == SD_CARD_RECEIVING ) ) )
+    {
+        errorstatus = IsCardProgramming( &cardstate );
+    }
+    return errorstatus;
+}
+//SD?“D∩?角???谷
+//buf:那y?Y?o∩???
+//addr:D∩米??﹞
+//blksize:?谷∩車D?
+//nblks:辰aD∩豕?米??谷那y
+//﹞米???米:∩赤?車℅∩足?
+SD_Error SD_WriteMultiBlocks( u8* buf, long long addr, u16 blksize, u32 nblks )
+{
+    SD_Error errorstatus = SD_OK;
+    u8  power = 0, cardstate = 0;
+    u32 timeout = 0, bytestransferred = 0;
+    u32 count = 0, restwords = 0;
+    u32 tlen = nblks * blksize;           //℅邦3∟?豕(℅??迆)
+    u32* tempbuff = ( u32* )buf;
+    if( buf == NULL )
+    {
+        return SD_INVALID_PARAMETER;    //2?那y∩赤?車
+    }
+    SDIO->DCTRL = 0x0;                        //那y?Y??????∩??ˉ??芍?(1?DMA)
+    SDIO_DataInitStructure.SDIO_DataBlockSize = 0; ;  //??3yDPSM℅∩足??迆????
+    SDIO_DataInitStructure.SDIO_DataLength = 0 ;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    if( SDIO->RESP1 & SD_CARD_LOCKED )
+    {
+        return SD_LOCK_UNLOCK_FAILED;    //?“??芍?
+    }
+    if( CardType == SDIO_HIGH_CAPACITY_SD_CARD ) //∩車豕Y芍??“
+    {
+        blksize = 512;
+        addr >>= 9;
+    }
+    if( ( blksize > 0 ) && ( blksize <= 2048 ) && ( ( blksize & ( blksize - 1 ) ) == 0 ) )
+    {
+        power = convert_from_bytes_to_power_of_two( blksize );
+        SDIO_CmdInitStructure.SDIO_Argument = blksize;  //﹞⊿?赤CMD16+谷豕??那y?Y3∟?豕?ablksize,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_SET_BLOCKLEN ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;    //?足車|∩赤?車
+        }
+    }
+    else
+    {
+        return SD_INVALID_PARAMETER;
+    }
+    if( nblks > 1 )
+    {
+        if( nblks * blksize > SD_MAX_DATA_LENGTH )
+        {
+            return SD_INVALID_PARAMETER;
+        }
+        if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) )
+        {
+            //足芍??D??邦
+            SDIO_CmdInitStructure.SDIO_Argument = ( u32 )RCA << 16;   //﹞⊿?赤ACMD55,?足?足車|
+            SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;
+            SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+            SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+            SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+            SDIO_SendCommand( &SDIO_CmdInitStructure );
+            errorstatus = CmdResp1Error( SD_CMD_APP_CMD );    //米豕∩yR1?足車|
+            if( errorstatus != SD_OK )
+            {
+                return errorstatus;
+            }
+            SDIO_CmdInitStructure.SDIO_Argument = nblks;      //﹞⊿?赤CMD23,谷豕???谷那y芍?,?足?足車|
+            SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCK_COUNT;
+            SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+            SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+            SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+            SDIO_SendCommand( &SDIO_CmdInitStructure );
+            errorstatus = CmdResp1Error( SD_CMD_SET_BLOCK_COUNT ); //米豕∩yR1?足車|
+            if( errorstatus != SD_OK )
+            {
+                return errorstatus;
+            }
+        }
+        SDIO_CmdInitStructure.SDIO_Argument = addr; //﹞⊿?赤CMD25,?角?谷D∩??芍?,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_WRITE_MULT_BLOCK;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_WRITE_MULT_BLOCK ); //米豕∩yR1?足車|
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;
+        }
+        SDIO_DataInitStructure.SDIO_DataBlockSize = power << 4; ; //blksize, ?????ˉ米??“
+        SDIO_DataInitStructure.SDIO_DataLength = nblks * blksize ;
+        SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT ;
+        SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+        SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToCard;
+        SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+        SDIO_DataConfig( &SDIO_DataInitStructure );
+        if( DeviceMode == SD_POLLING_MODE )
+        {
+            timeout = SDIO_DATATIMEOUT;
+            INTX_DISABLE();//1?㊣?℅邦?D??(POLLING?㏒那?,?????D??∩辰??SDIO?芍D∩2迄℅ˉ!!!)
+            while( !( SDIO->STA & ( ( 1 << 4 ) | ( 1 << 1 ) | ( 1 << 8 ) | ( 1 << 3 ) | ( 1 << 9 ) ) ) ) //??辰?/CRC/那y?Y?芍那?/3?那㊣/?e那???∩赤?車
+            {
+                if( SDIO_GetFlagStatus( SDIO_FLAG_TXFIFOHE ) != RESET )                     //﹞⊿?赤??～???,㊣赤那??芍谷迄∩?芍?8℅?(32℅??迆)
+                {
+                    if( ( tlen - bytestransferred ) < SD_HALFFIFOBYTES ) //2?1?32℅??迆芍?
+                    {
+                        restwords = ( ( tlen - bytestransferred ) % 4 == 0 ) ? ( ( tlen - bytestransferred ) / 4 ) : ( ( tlen - bytestransferred ) / 4 + 1 );
+                        for( count = 0; count < restwords; count++, tempbuff++, bytestransferred += 4 )
+                        {
+                            SDIO->FIFO = *tempbuff;
+                        }
+                    }
+                    else                                          //﹞⊿?赤??～???,?谷辰?﹞⊿?赤?芍谷迄8℅?(32℅??迆)那y?Y
+                    {
+                        for( count = 0; count < SD_HALFFIFO; count++ )
+                        {
+                            SDIO->FIFO = *( tempbuff + count );
+                        }
+                        tempbuff += SD_HALFFIFO;
+                        bytestransferred += SD_HALFFIFOBYTES;
+                    }
+                    timeout = 0X3FFFFFFF; //D∩那y?Y辰?3?那㊣??
+                }
+                else
+                {
+                    if( timeout == 0 )
+                    {
+                        return SD_DATA_TIMEOUT;
+                    }
+                    timeout--;
+                }
+            }
+            if( SDIO_GetFlagStatus( SDIO_FLAG_DTIMEOUT ) != RESET )   //那y?Y3?那㊣∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_DTIMEOUT );   //??∩赤?車㊣那??
+                return SD_DATA_TIMEOUT;
+            }
+            else if( SDIO_GetFlagStatus( SDIO_FLAG_DCRCFAIL ) != RESET ) //那y?Y?谷CRC∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_DCRCFAIL );       //??∩赤?車㊣那??
+                return SD_DATA_CRC_FAIL;
+            }
+            else if( SDIO_GetFlagStatus( SDIO_FLAG_TXUNDERR ) != RESET )  //?車那?fifo??辰?∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_TXUNDERR );   //??∩赤?車㊣那??
+                return SD_TX_UNDERRUN;
+            }
+            else if( SDIO_GetFlagStatus( SDIO_FLAG_STBITERR ) != RESET )  //?車那??e那???∩赤?車
+            {
+                SDIO_ClearFlag( SDIO_FLAG_STBITERR ); //??∩赤?車㊣那??
+                return SD_START_BIT_ERR;
+            }
+            if( SDIO_GetFlagStatus( SDIO_FLAG_DATAEND ) != RESET )    //﹞⊿?赤?芍那?
+            {
+                if( ( SDIO_STD_CAPACITY_SD_CARD_V1_1 == CardType ) || ( SDIO_STD_CAPACITY_SD_CARD_V2_0 == CardType ) || ( SDIO_HIGH_CAPACITY_SD_CARD == CardType ) )
+                {
+                    SDIO_CmdInitStructure.SDIO_Argument = 0; //﹞⊿?赤CMD12+?芍那?∩?那?
+                    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_STOP_TRANSMISSION;
+                    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+                    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+                    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+                    SDIO_SendCommand( &SDIO_CmdInitStructure );
+                    errorstatus = CmdResp1Error( SD_CMD_STOP_TRANSMISSION ); //米豕∩yR1?足車|
+                    if( errorstatus != SD_OK )
+                    {
+                        return errorstatus;
+                    }
+                }
+            }
+            INTX_ENABLE();//?a??℅邦?D??
+            SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+        }
+        else if( DeviceMode == SD_DMA_MODE )
+        {
+            TransferError = SD_OK;
+            StopCondition = 1;        //?角?谷D∩,D豕辰a﹞⊿?赤赤㏒?1∩?那???芍?
+            TransferEnd = 0;              //∩?那??芍那?㊣那????㏒??迆?D??﹞t????1
+            SDIO->MASK |= ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 4 ) | ( 1 << 9 ); //????2迆谷迆那y?Y?車那?赤那3谷?D??
+            SD_DMA_Config( ( u32* )buf, nblks * blksize, DMA_DIR_MemoryToPeripheral ); //SDIO DMA????
+            SDIO->DCTRL |= 1 << 3;                            //SDIO DMA那1?邦.
+            timeout = SDIO_DATATIMEOUT;
+            while( ( ( DMA2->LISR & ( 1 << 27 ) ) == RESET ) && timeout )
+            {
+                timeout--;    //米豕∩y∩?那?赤那3谷
+            }
+            if( timeout == 0 )                                //3?那㊣
+            {
+                SD_Init();                      //??D?3?那??‘SD?“,?谷辰??a??D∩豕??角?迆米??那足a
+                return SD_DATA_TIMEOUT;         //3?那㊣
+            }
+            timeout = SDIO_DATATIMEOUT;
+            while( ( TransferEnd == 0 ) && ( TransferError == SD_OK ) && timeout )
+            {
+                timeout--;
+            }
+            if( timeout == 0 )
+            {
+                return SD_DATA_TIMEOUT;    //3?那㊣
+            }
+            if( TransferError != SD_OK )
+            {
+                return TransferError;
+            }
+        }
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    errorstatus = IsCardProgramming( &cardstate );
+    while( ( errorstatus == SD_OK ) && ( ( cardstate == SD_CARD_PROGRAMMING ) || ( cardstate == SD_CARD_RECEIVING ) ) )
+    {
+        errorstatus = IsCardProgramming( &cardstate );
+    }
+    return errorstatus;
+}
+//SDIO?D??﹞t??o‘那y
+void SDIO_IRQHandler( void )
+{
+    SD_ProcessIRQSrc();//∩|角赤?迄車DSDIO?角1??D??
+}
+//SDIO?D??∩|角赤o‘那y
+//∩|角赤SDIO∩?那?1y3足?D米??ˉ???D??那???
+//﹞米???米:∩赤?車∩迆??
+SD_Error SD_ProcessIRQSrc( void )
+{
+    if( SDIO_GetFlagStatus( SDIO_FLAG_DATAEND ) != RESET ) //?車那?赤那3谷?D??
+    {
+        if( StopCondition == 1 )
+        {
+            SDIO_CmdInitStructure.SDIO_Argument = 0; //﹞⊿?赤CMD12+?芍那?∩?那?
+            SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_STOP_TRANSMISSION;
+            SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+            SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+            SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+            SDIO_SendCommand( &SDIO_CmdInitStructure );
+            TransferError = CmdResp1Error( SD_CMD_STOP_TRANSMISSION );
+        }
+        else
+        {
+            TransferError = SD_OK;
+        }
+        SDIO->ICR |= 1 << 8; //??3y赤那3谷?D??㊣那??
+        SDIO->MASK &= ~( ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 14 ) | ( 1 << 15 ) | ( 1 << 4 ) | ( 1 << 5 ) | ( 1 << 9 ) ); //1?㊣??角1??D??
+        TransferEnd = 1;
+        return( TransferError );
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_DCRCFAIL ) != RESET ) //那y?YCRC∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_DCRCFAIL );       //??∩赤?車㊣那??
+        SDIO->MASK &= ~( ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 14 ) | ( 1 << 15 ) | ( 1 << 4 ) | ( 1 << 5 ) | ( 1 << 9 ) ); //1?㊣??角1??D??
+        TransferError = SD_DATA_CRC_FAIL;
+        return( SD_DATA_CRC_FAIL );
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_DTIMEOUT ) != RESET ) //那y?Y3?那㊣∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_DTIMEOUT );           //???D??㊣那??
+        SDIO->MASK &= ~( ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 14 ) | ( 1 << 15 ) | ( 1 << 4 ) | ( 1 << 5 ) | ( 1 << 9 ) ); //1?㊣??角1??D??
+        TransferError = SD_DATA_TIMEOUT;
+        return( SD_DATA_TIMEOUT );
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_RXOVERR ) != RESET ) //FIFO谷?辰?∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_RXOVERR );            //???D??㊣那??
+        SDIO->MASK &= ~( ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 14 ) | ( 1 << 15 ) | ( 1 << 4 ) | ( 1 << 5 ) | ( 1 << 9 ) ); //1?㊣??角1??D??
+        TransferError = SD_RX_OVERRUN;
+        return( SD_RX_OVERRUN );
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_TXUNDERR ) != RESET ) //FIFO??辰?∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_TXUNDERR );           //???D??㊣那??
+        SDIO->MASK &= ~( ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 14 ) | ( 1 << 15 ) | ( 1 << 4 ) | ( 1 << 5 ) | ( 1 << 9 ) ); //1?㊣??角1??D??
+        TransferError = SD_TX_UNDERRUN;
+        return( SD_TX_UNDERRUN );
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_STBITERR ) != RESET ) //?e那???∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_STBITERR );       //???D??㊣那??
+        SDIO->MASK &= ~( ( 1 << 1 ) | ( 1 << 3 ) | ( 1 << 8 ) | ( 1 << 14 ) | ( 1 << 15 ) | ( 1 << 4 ) | ( 1 << 5 ) | ( 1 << 9 ) ); //1?㊣??角1??D??
+        TransferError = SD_START_BIT_ERR;
+        return( SD_START_BIT_ERR );
+    }
+    return( SD_OK );
+}
+
+//?足2谷CMD0米??∩DD℅∩足?
+//﹞米???米:sd?“∩赤?車??
+SD_Error CmdError( void )
+{
+    SD_Error errorstatus = SD_OK;
+    u32 timeout = SDIO_CMD0TIMEOUT;
+    while( timeout-- )
+    {
+        if( SDIO_GetFlagStatus( SDIO_FLAG_CMDSENT ) != RESET )
+        {
+            break;    //?邦芍?辰?﹞⊿?赤(?TD豕?足車|)
+        }
+    }
+    if( timeout == 0 )
+    {
+        return SD_CMD_RSP_TIMEOUT;
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    return errorstatus;
+}
+//?足2谷R7?足車|米?∩赤?車℅∩足?
+//﹞米???米:sd?“∩赤?車??
+SD_Error CmdResp7Error( void )
+{
+    SD_Error errorstatus = SD_OK;
+    u32 status;
+    u32 timeout = SDIO_CMD0TIMEOUT;
+    while( timeout-- )
+    {
+        status = SDIO->STA;
+        if( status & ( ( 1 << 0 ) | ( 1 << 2 ) | ( 1 << 6 ) ) )
+        {
+            break;    //CRC∩赤?車/?邦芍??足車|3?那㊣/辰??-那?米??足車|(CRCD㏒?谷3谷1|)
+        }
+    }
+    if( ( timeout == 0 ) || ( status & ( 1 << 2 ) ) ) //?足車|3?那㊣
+    {
+        errorstatus = SD_CMD_RSP_TIMEOUT; //米㊣?～?“2?那?2.0??豕Y?“,?辰??2??∫3?谷豕?“米?米??1﹞??∫
+        SDIO_ClearFlag( SDIO_FLAG_CTIMEOUT );           //??3y?邦芍??足車|3?那㊣㊣那??
+        return errorstatus;
+    }
+    if( status & 1 << 6 )                 //3谷1|?車那?米??足車|
+    {
+        errorstatus = SD_OK;
+        SDIO_ClearFlag( SDIO_FLAG_CMDREND );            //??3y?足車|㊣那??
+    }
+    return errorstatus;
+}
+//?足2谷R1?足車|米?∩赤?車℅∩足?
+//cmd:米㊣?～?邦芍?
+//﹞米???米:sd?“∩赤?車??
+SD_Error CmdResp1Error( u8 cmd )
+{
+    u32 status;
+    while( 1 )
+    {
+        status = SDIO->STA;
+        if( status & ( ( 1 << 0 ) | ( 1 << 2 ) | ( 1 << 6 ) ) )
+        {
+            break;    //CRC∩赤?車/?邦芍??足車|3?那㊣/辰??-那?米??足車|(CRCD㏒?谷3谷1|)
+        }
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CTIMEOUT ) != RESET )               //?足車|3?那㊣
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CTIMEOUT );               //??3y?邦芍??足車|3?那㊣㊣那??
+        return SD_CMD_RSP_TIMEOUT;
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CCRCFAIL ) != RESET )               //CRC∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CCRCFAIL );               //??3y㊣那??
+        return SD_CMD_CRC_FAIL;
+    }
+    if( SDIO->RESPCMD != cmd )
+    {
+        return SD_ILLEGAL_CMD;    //?邦芍?2??ㄓ??
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    return ( SD_Error )( SDIO->RESP1 & SD_OCR_ERRORBITS ); //﹞米???“?足車|
+}
+//?足2谷R3?足車|米?∩赤?車℅∩足?
+//﹞米???米:∩赤?車℅∩足?
+SD_Error CmdResp3Error( void )
+{
+    u32 status;
+    while( 1 )
+    {
+        status = SDIO->STA;
+        if( status & ( ( 1 << 0 ) | ( 1 << 2 ) | ( 1 << 6 ) ) )
+        {
+            break;    //CRC∩赤?車/?邦芍??足車|3?那㊣/辰??-那?米??足車|(CRCD㏒?谷3谷1|)
+        }
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CTIMEOUT ) != RESET )               //?足車|3?那㊣
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CTIMEOUT );       //??3y?邦芍??足車|3?那㊣㊣那??
+        return SD_CMD_RSP_TIMEOUT;
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    return SD_OK;
+}
+//?足2谷R2?足車|米?∩赤?車℅∩足?
+//﹞米???米:∩赤?車℅∩足?
+SD_Error CmdResp2Error( void )
+{
+    SD_Error errorstatus = SD_OK;
+    u32 status;
+    u32 timeout = SDIO_CMD0TIMEOUT;
+    while( timeout-- )
+    {
+        status = SDIO->STA;
+        if( status & ( ( 1 << 0 ) | ( 1 << 2 ) | ( 1 << 6 ) ) )
+        {
+            break;    //CRC∩赤?車/?邦芍??足車|3?那㊣/辰??-那?米??足車|(CRCD㏒?谷3谷1|)
+        }
+    }
+    if( ( timeout == 0 ) || ( status & ( 1 << 2 ) ) ) //?足車|3?那㊣
+    {
+        errorstatus = SD_CMD_RSP_TIMEOUT;
+        SDIO_ClearFlag( SDIO_FLAG_CTIMEOUT );       //??3y?邦芍??足車|3?那㊣㊣那??
+        return errorstatus;
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CCRCFAIL ) != RESET )                   //CRC∩赤?車
+    {
+        errorstatus = SD_CMD_CRC_FAIL;
+        SDIO_ClearFlag( SDIO_FLAG_CCRCFAIL );   //??3y?足車|㊣那??
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    return errorstatus;
+}
+//?足2谷R6?足車|米?∩赤?車℅∩足?
+//cmd:???～﹞⊿?赤米??邦芍?
+//prca:?“﹞米??米?RCA米??﹞
+//﹞米???米:∩赤?車℅∩足?
+SD_Error CmdResp6Error( u8 cmd, u16* prca )
+{
+    SD_Error errorstatus = SD_OK;
+    u32 status;
+    u32 rspr1;
+    while( 1 )
+    {
+        status = SDIO->STA;
+        if( status & ( ( 1 << 0 ) | ( 1 << 2 ) | ( 1 << 6 ) ) )
+        {
+            break;    //CRC∩赤?車/?邦芍??足車|3?那㊣/辰??-那?米??足車|(CRCD㏒?谷3谷1|)
+        }
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CTIMEOUT ) != RESET )               //?足車|3?那㊣
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CTIMEOUT );       //??3y?邦芍??足車|3?那㊣㊣那??
+        return SD_CMD_RSP_TIMEOUT;
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CCRCFAIL ) != RESET )                   //CRC∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CCRCFAIL );               //??3y?足車|㊣那??
+        return SD_CMD_CRC_FAIL;
+    }
+    if( SDIO->RESPCMD != cmd )            //?D??那?﹞??足車|cmd?邦芍?
+    {
+        return SD_ILLEGAL_CMD;
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    rspr1 = SDIO->RESP1;                  //米?米??足車|
+    if( SD_ALLZERO == ( rspr1 & ( SD_R6_GENERAL_UNKNOWN_ERROR | SD_R6_ILLEGAL_CMD | SD_R6_COM_CRC_FAILED ) ) )
+    {
+        *prca = ( u16 )( rspr1 >> 16 ); //車辰辰?16??米?米?,rca
+        return errorstatus;
+    }
+    if( rspr1 & SD_R6_GENERAL_UNKNOWN_ERROR )
+    {
+        return SD_GENERAL_UNKNOWN_ERROR;
+    }
+    if( rspr1 & SD_R6_ILLEGAL_CMD )
+    {
+        return SD_ILLEGAL_CMD;
+    }
+    if( rspr1 & SD_R6_COM_CRC_FAILED )
+    {
+        return SD_COM_CRC_FAILED;
+    }
+    return errorstatus;
+}
+
+//SDIO那1?邦?赤℅邦???㏒那?
+//enx:0,2?那1?邦;1,那1?邦;
+//﹞米???米:∩赤?車℅∩足?
+SD_Error SDEnWideBus( u8 enx )
+{
+    SD_Error errorstatus = SD_OK;
+    u32 scr[2] = {0, 0};
+    u8 arg = 0X00;
+    if( enx )
+    {
+        arg = 0X02;
+    }
+    else
+    {
+        arg = 0X00;
+    }
+    if( SDIO->RESP1 & SD_CARD_LOCKED )
+    {
+        return SD_LOCK_UNLOCK_FAILED;    //SD?“∩|車迆LOCKED℅∩足?
+    }
+    errorstatus = FindSCR( RCA, scr );                //米?米?SCR??∩??ˉ那y?Y
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    if( ( scr[1]&SD_WIDE_BUS_SUPPORT ) != SD_ALLZERO ) //?∫3??赤℅邦??
+    {
+        SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) RCA << 16; //﹞⊿?赤CMD55+RCA,?足?足車|
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_APP_CMD );
+        if( errorstatus != SD_OK )
+        {
+            return errorstatus;
+        }
+        SDIO_CmdInitStructure.SDIO_Argument = arg;//﹞⊿?赤ACMD6,?足?足車|,2?那y:10,4??;00,1??.
+        SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_SD_SET_BUSWIDTH;
+        SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+        SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+        SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+        SDIO_SendCommand( &SDIO_CmdInitStructure );
+        errorstatus = CmdResp1Error( SD_CMD_APP_SD_SET_BUSWIDTH );
+        return errorstatus;
+    }
+    else
+    {
+        return SD_REQUEST_NOT_APPLICABLE;    //2??∫3??赤℅邦??谷豕??
+    }
+}
+//?足2谷?“那?﹞??y?迆?∩DDD∩2迄℅ˉ
+//pstatus:米㊣?～℅∩足?.
+//﹞米???米:∩赤?車∩迆??
+SD_Error IsCardProgramming( u8* pstatus )
+{
+    vu32 respR1 = 0, status = 0;
+    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) RCA << 16; //?“?角??米??﹞2?那y
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SEND_STATUS;//﹞⊿?赤CMD13
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    status = SDIO->STA;
+    while( !( status & ( ( 1 << 0 ) | ( 1 << 6 ) | ( 1 << 2 ) ) ) )
+    {
+        status = SDIO->STA;    //米豕∩y2迄℅ˉ赤那3谷
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CCRCFAIL ) != RESET )       //CRC?足2a那∫～邦
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CCRCFAIL ); //??3y∩赤?車㊣那??
+        return SD_CMD_CRC_FAIL;
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_CTIMEOUT ) != RESET )       //?邦芍?3?那㊣
+    {
+        SDIO_ClearFlag( SDIO_FLAG_CTIMEOUT );       //??3y∩赤?車㊣那??
+        return SD_CMD_RSP_TIMEOUT;
+    }
+    if( SDIO->RESPCMD != SD_CMD_SEND_STATUS )
+    {
+        return SD_ILLEGAL_CMD;
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    respR1 = SDIO->RESP1;
+    *pstatus = ( u8 )( ( respR1 >> 9 ) & 0x0000000F );
+    return SD_OK;
+}
+//?芍豕?米㊣?～?“℅∩足?
+//pcardstatus:?“℅∩足?
+//﹞米???米:∩赤?車∩迆??
+SD_Error SD_SendStatus( uint32_t* pcardstatus )
+{
+    SD_Error errorstatus = SD_OK;
+    if( pcardstatus == NULL )
+    {
+        errorstatus = SD_INVALID_PARAMETER;
+        return errorstatus;
+    }
+    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) RCA << 16; //﹞⊿?赤CMD13,?足?足車|
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SEND_STATUS;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp1Error( SD_CMD_SEND_STATUS ); //2谷?‘?足車|℅∩足?
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    *pcardstatus = SDIO->RESP1; //?芍豕??足車|?米
+    return errorstatus;
+}
+//﹞米??SD?“米?℅∩足?
+//﹞米???米:SD?“℅∩足?
+SDCardState SD_GetState( void )
+{
+    u32 resp1 = 0;
+    if( SD_SendStatus( &resp1 ) != SD_OK )
+    {
+        return SD_CARD_ERROR;
+    }
+    else
+    {
+        return ( SDCardState )( ( resp1 >> 9 ) & 0x0F );
+    }
+}
+//2谷?辰SD?“米?SCR??∩??ˉ?米
+//rca:?“?角??米??﹞
+//pscr:那y?Y?o∩???(∩?∩⊿SCR?迆豕Y)
+//﹞米???米:∩赤?車℅∩足?
+SD_Error FindSCR( u16 rca, u32* pscr )
+{
+    u32 index = 0;
+    SD_Error errorstatus = SD_OK;
+    u32 tempscr[2] = {0, 0};
+    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t )8;   //﹞⊿?赤CMD16,?足?足車|,谷豕??Block Size?a8℅??迆
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN; //  cmd16
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;  //r1
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp1Error( SD_CMD_SET_BLOCKLEN );
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    SDIO_CmdInitStructure.SDIO_Argument = ( uint32_t ) RCA << 16;
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_APP_CMD;//﹞⊿?赤CMD55,?足?足車|
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp1Error( SD_CMD_APP_CMD );
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT;
+    SDIO_DataInitStructure.SDIO_DataLength = 8;  //8??℅??迆3∟?豕,block?a8℅??迆,SD?“米?SDIO.
+    SDIO_DataInitStructure.SDIO_DataBlockSize = SDIO_DataBlockSize_8b  ;  //?谷∩車D?8byte
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToSDIO;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataConfig( &SDIO_DataInitStructure );
+    SDIO_CmdInitStructure.SDIO_Argument = 0x0;
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SD_APP_SEND_SCR; //﹞⊿?赤ACMD51,?足?足車|,2?那y?a0
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;  //r1
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand( &SDIO_CmdInitStructure );
+    errorstatus = CmdResp1Error( SD_CMD_SD_APP_SEND_SCR );
+    if( errorstatus != SD_OK )
+    {
+        return errorstatus;
+    }
+    while( !( SDIO->STA & ( SDIO_FLAG_RXOVERR | SDIO_FLAG_DCRCFAIL | SDIO_FLAG_DTIMEOUT | SDIO_FLAG_DBCKEND | SDIO_FLAG_STBITERR ) ) )
+    {
+        if( SDIO_GetFlagStatus( SDIO_FLAG_RXDAVL ) != RESET ) //?車那?FIFO那y?Y?谷車?
+        {
+            *( tempscr + index ) = SDIO->FIFO; //?芍豕?FIFO?迆豕Y
+            index++;
+            if( index >= 2 )
+            {
+                break;
+            }
+        }
+    }
+    if( SDIO_GetFlagStatus( SDIO_FLAG_DTIMEOUT ) != RESET )   //那y?Y3?那㊣∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_DTIMEOUT );   //??∩赤?車㊣那??
+        return SD_DATA_TIMEOUT;
+    }
+    else if( SDIO_GetFlagStatus( SDIO_FLAG_DCRCFAIL ) != RESET ) //那y?Y?谷CRC∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_DCRCFAIL );       //??∩赤?車㊣那??
+        return SD_DATA_CRC_FAIL;
+    }
+    else if( SDIO_GetFlagStatus( SDIO_FLAG_RXOVERR ) != RESET ) //?車那?fifo谷?辰?∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_RXOVERR );    //??∩赤?車㊣那??
+        return SD_RX_OVERRUN;
+    }
+    else if( SDIO_GetFlagStatus( SDIO_FLAG_STBITERR ) != RESET )  //?車那??e那???∩赤?車
+    {
+        SDIO_ClearFlag( SDIO_FLAG_STBITERR ); //??∩赤?車㊣那??
+        return SD_START_BIT_ERR;
+    }
+    SDIO_ClearFlag( SDIO_STATIC_FLAGS ); //??3y?迄車D㊣那??
+    //～?那y?Y?3D辰～∩8???a米ㄓ??米11y角∩.
+    *( pscr + 1 ) = ( ( tempscr[0] & SD_0TO7BITS ) << 24 ) | ( ( tempscr[0] & SD_8TO15BITS ) << 8 ) | ( ( tempscr[0] & SD_16TO23BITS ) >> 8 ) | ( ( tempscr[0] & SD_24TO31BITS ) >> 24 );
+    *( pscr ) = ( ( tempscr[1] & SD_0TO7BITS ) << 24 ) | ( ( tempscr[1] & SD_8TO15BITS ) << 8 ) | ( ( tempscr[1] & SD_16TO23BITS ) >> 8 ) | ( ( tempscr[1] & SD_24TO31BITS ) >> 24 );
+    return errorstatus;
+}
+//米?米?NumberOfBytes辰?2?a米℅米???那y.
+//NumberOfBytes:℅??迆那y.
+//﹞米???米:辰?2?a米℅米???那y?米
+u8 convert_from_bytes_to_power_of_two( u16 NumberOfBytes )
+{
+    u8 count = 0;
+    while( NumberOfBytes != 1 )
+    {
+        NumberOfBytes >>= 1;
+        count++;
+    }
+    return count;
+}
+
+//????SDIO DMA
+//mbuf:∩?∩⊿?ˉ米??﹞
+//bufsize:∩?那?那y?Y芍?
+//dir:﹞??辰;DMA_DIR_MemoryToPeripheral  ∩?∩⊿?ˉ-->SDIO(D∩那y?Y);DMA_DIR_PeripheralToMemory SDIO-->∩?∩⊿?ˉ(?芍那y?Y);
+void SD_DMA_Config( u32* mbuf, u32 bufsize, u32 dir )
+{
+    DMA_InitTypeDef  DMA_InitStructure;
+    while( DMA_GetCmdStatus( DMA2_Stream3 ) != DISABLE ) {} //米豕∩yDMA?谷????
+    DMA_DeInit( DMA2_Stream3 ); //???????～??stream3谷?米??迄車D?D??㊣那??
+    DMA_InitStructure.DMA_Channel = DMA_Channel_4;  //赤“米角????
+    DMA_InitStructure.DMA_PeripheralBaseAddr = ( u32 )&SDIO->FIFO; //DMA赤a谷豕米??﹞
+    DMA_InitStructure.DMA_Memory0BaseAddr = ( u32 )mbuf; //DMA ∩?∩⊿?ˉ0米??﹞
+    DMA_InitStructure.DMA_DIR = dir;//∩?∩⊿?ˉ米?赤a谷豕?㏒那?
+    DMA_InitStructure.DMA_BufferSize = 0;//那y?Y∩?那?芍?
+    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;//赤a谷豕﹞???芍??㏒那?
+    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;//∩?∩⊿?ˉ??芍??㏒那?
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;//赤a谷豕那y?Y3∟?豕:32??
+    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;//∩?∩⊿?ˉ那y?Y3∟?豕:32??
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;// 那1車???赤“?㏒那?
+    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;//℅???車??豕??
+    DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;   //FIFO那1?邦
+    DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;//豕?FIFO
+    DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_INC4;//赤a谷豕赤?﹞⊿4∩?∩?那?
+    DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_INC4;//∩?∩⊿?ˉ赤?﹞⊿4∩?∩?那?
+    DMA_Init( DMA2_Stream3, &DMA_InitStructure ); //3?那??‘DMA Stream
+    DMA_FlowControllerConfig( DMA2_Stream3, DMA_FlowCtrl_Peripheral ); //赤a谷豕芍ˉ????
+    DMA_Cmd( DMA2_Stream3, ENABLE ); //?a??DMA∩?那?
+}
+
+
+//?芍SD?“
+//buf:?芍那y?Y?o∩???
+//sector:谷豕??米??﹞
+//cnt:谷豕????那y
+//﹞米???米:∩赤?車℅∩足?;0,?y3㏒;????,∩赤?車∩迆??;
+u8 SD_ReadDisk( u8* buf, u32 sector, u8 cnt )
+{
+    u8 sta = SD_OK;
+    long long lsector = sector;
+    u8 n;
+    lsector <<= 9;
+    if( ( u32 )buf % 4 != 0 )
+    {
+        for( n = 0; n < cnt; n++ )
+        {
+            sta = SD_ReadBlock( SDIO_DATA_BUFFER, lsector + 512 * n, 512 ); //米ㄓ??sector米??芍2迄℅ˉ
+            memcpy( buf, SDIO_DATA_BUFFER, 512 );
+            buf += 512;
+        }
+    }
+    else
+    {
+        if( cnt == 1 )
+        {
+            sta = SD_ReadBlock( buf, lsector, 512 );    //米ㄓ??sector米??芍2迄℅ˉ
+        }
+        else
+        {
+            sta = SD_ReadMultiBlocks( buf, lsector, 512, cnt );    //?角??sector
+        }
+    }
+    return sta;
+}
+//D∩SD?“
+//buf:D∩那y?Y?o∩???
+//sector:谷豕??米??﹞
+//cnt:谷豕????那y
+//﹞米???米:∩赤?車℅∩足?;0,?y3㏒;????,∩赤?車∩迆??;
+u8 SD_WriteDisk( u8* buf, u32 sector, u8 cnt )
+{
+    u8 sta = SD_OK;
+    u8 n;
+    long long lsector = sector;
+    lsector <<= 9;
+    if( ( u32 )buf % 4 != 0 )
+    {
+        for( n = 0; n < cnt; n++ )
+        {
+            memcpy( SDIO_DATA_BUFFER, buf, 512 );
+            sta = SD_WriteBlock( SDIO_DATA_BUFFER, lsector + 512 * n, 512 ); //米ㄓ??sector米?D∩2迄℅ˉ
+            buf += 512;
+        }
+    }
+    else
+    {
+        if( cnt == 1 )
+        {
+            sta = SD_WriteBlock( buf, lsector, 512 );    //米ㄓ??sector米?D∩2迄℅ˉ
+        }
+        else
+        {
+            sta = SD_WriteMultiBlocks( buf, lsector, 512, cnt );    //?角??sector
+        }
+    }
+    return sta;
+}
+
+
+
+
+
+
+
+

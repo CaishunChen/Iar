@@ -1,0 +1,45 @@
+1.是否开启常规观测模式  tradion sample start
+	开启：$SDTSS,1,yyyy/MM/dd_hh:mm:ss*hh
+	关闭：$SDTSS,0,yyyy/MM/dd_hh:mm:ss*hh
+返回值：$SDTSS,1,yyyy/mm/dd hh:mm:ss*hh
+
+2.是否记录原始数据 （默认开启，由SD卡配置）OriginalData Record
+	是：$SDODT,star,yyyy/MM/dd_hh:mm:ss*hh
+	否：$SDODT,stop,yyyy/MM/dd_hh:mm:ss*hh
+返回值：$SDODT,S/E,yyyy/mm/dd hh:mm:ss*hh
+
+3.实时数据显示 Real Time Display
+     	开启：$SDRTD,1,,yyyy/MM/dd_hh:mm:ss*hh
+	关闭：$SDRTD,0,,yyyy/MM/dd_hh:mm:ss*hh
+
+4.采集模式选择 Scanning Mode Select
+	1024s：$SDSMS,1,yyyy/MM/dd_hh:mm:ss*hh
+	100大波：$SDSMS,2,yyyy/MM/dd_hh:mm:ss*hh
+返回值：$SDSMS,1/2,yyyy/mm/dd hh:mm:ss*hh
+
+5.采样间隔（单位、s）tradition sample interval
+	$UDTSI,1,900,yyyy/MM/dd_hh:mm:ss*hh.
+返回值 ：$UDTSI,2,1000,yyyy/mm/dd hh:mm:ss*hh\r\n
+
+6.罗盘校准 Mag Senser Adjustment
+	$SDMSA,1*hh
+返回值 ：$SDMSA,OK*hh\r\n
+
+7.时间校准 Senser Time Adjustment
+	GPS:$SDSTC,GPS*hh
+	电脑：$SDSTC,LOC,yyyy/MM/dd_hh:mm:ss*hh
+返回值 ：$SDSTC,OK*hh\r\n
+
+8.常规观测数据提取 Wave observation extraction data
+	$UDWED,1*hh
+返回值：$UDWCR,XX.X,XX.X,XX.X,XX.X,XX.X,XX.X,XX.X,XX.X,XX.X,XX*hh
+
+9.传感器重启 senser—system-restart
+	$SDSSR,1*hh
+
+10.获取传感器配置 get_senser_config
+	$SDGSC,1*hh
+	标识符$SDGSC，计算方式，采样间隔，是否记录原始数据，是否实时显示，出厂号，设备号（用户可在SD卡的TWS.cfg文件中自行定义00~99）*校验
+
+
+

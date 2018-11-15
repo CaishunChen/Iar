@@ -1,0 +1,263 @@
+#include "Master_i2c.h"
+#include "SysTick.h"
+
+extern uint8_t S0_write_reg_succeed;
+
+
+void I2C_delay(void)
+{
+	u32 i = 20;
+	while( i-- );
+}
+
+void I2C_Init_IO(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  
+  //使能时钟
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE,ENABLE);
+//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
+  
+  //配置引脚
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;   
+  GPIO_InitStructure.GPIO_Mode=GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_OType=GPIO_OType_OD;
+  GPIO_InitStructure.GPIO_Speed=GPIO_Speed_25MHz;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;   
+  GPIO_InitStructure.GPIO_Mode=GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_OType=GPIO_OType_OD;
+  GPIO_InitStructure.GPIO_Speed=GPIO_Speed_25MHz;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  
+  GPIO_SetBits(GPIOE, GPIO_Pin_15);
+  GPIO_SetBits(GPIOE, GPIO_Pin_13);
+  
+//   GPIO_InitTypeDef GPIO_InitStructure;
+//  
+//  //使能时钟
+//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
+//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE);
+//  
+//  //配置引脚
+//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;   
+//  GPIO_InitStructure.GPIO_Mode=GPIO_Mode_OUT;
+//  GPIO_InitStructure.GPIO_OType=GPIO_OType_OD;
+//  GPIO_InitStructure.GPIO_Speed=GPIO_Speed_25MHz;
+//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//  GPIO_Init(GPIOD, &GPIO_InitStructure);
+//  
+//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;   
+//  GPIO_InitStructure.GPIO_Mode=GPIO_Mode_OUT;
+//  GPIO_InitStructure.GPIO_OType=GPIO_OType_OD;
+//  GPIO_InitStructure.GPIO_Speed=GPIO_Speed_25MHz;
+//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//  GPIO_Init(GPIOB, &GPIO_InitStructure);
+//  
+//  GPIO_SetBits(GPIOD, GPIO_Pin_5);
+//  GPIO_SetBits(GPIOB, GPIO_Pin_3);
+  //初始化ICC的模式
+}
+
+
+void I2C_Start(void)
+{
+  
+  SDA_OUT();
+  SDA_H;
+  SCL_H;
+  delay_us(2);
+  SDA_L;
+  delay_us(2);
+  SCL_L;
+}
+
+void I2C_Stop(void)
+{
+	
+        SDA_OUT();
+	SDA_L;
+	SCL_H;
+        delay_us(2);
+	SDA_H;
+	delay_us(2);
+  
+} 
+
+
+u8 I2C_WaitAck(void) 	 
+{
+	u8 errtime = 0;
+        SDA_IN();
+        SDA_H;	
+        delay_us(2);
+	SCL_H;
+        delay_us(2);
+	while(SDA_read)
+	{
+		errtime++;
+		if(errtime>250)
+		{
+                  
+			I2C_Stop();
+			return 0;	
+		}
+	}
+	SCL_L;
+                delay_us(2);
+	return 1;
+}
+
+
+void I2C_Ack(void)
+{	
+	    SCL_L;
+  SDA_OUT();
+  SDA_L;
+  delay_us(2);
+  SCL_H;
+  delay_us(2);
+  SCL_L;
+  delay_us(2);
+  
+}
+
+void I2C_NoAck(void)
+{	
+  SCL_L;
+  SDA_OUT();
+  SDA_H;
+  delay_us(2);
+  SCL_H;
+  delay_us(2);
+  SCL_L;
+  delay_us(2);
+}
+
+void I2C_SendByte(u8 SendByte)
+{
+   	 u8 i;
+         SDA_OUT();
+	  SCL_L;
+	 for(i=0;i<8;i++)
+	 {  
+		//---------数据建立----------
+		if(SendByte&0x80)
+		{
+			SDA_H;
+		}
+		else
+		{
+			SDA_L;
+		} 
+		SendByte<<=1;
+		delay_us(2);
+		//---数据建立保持一定延时----
+		//----产生一个上升沿[正脉冲] 
+		SCL_H;
+		delay_us(2);
+		SCL_L;
+		delay_us(2);//延时,防止SCL还没变成低时改变SDA,从而产生START/STOP信号
+	 }
+}
+
+
+u8 I2C_ReadByte(void)  
+{ 	 
+      u8 i,Dat = 0;
+         SDA_IN();
+	 SDA_H;
+	 SCL_L; //低电平时允许数据变化
+
+	 for(i=0;i<8;i++)
+	 {
+		SCL_H;//产生时钟上升沿[正脉冲],让从机准备好数据 
+	       delay_us(2);
+		Dat<<=1;
+		if(SDA_read) //读引脚状态
+		{
+			Dat|=0x01; 
+		}   
+		SCL_L;//准备好再次接收数据  
+		delay_us(2);//等待数据准备好         
+	 }
+	 return Dat;
+  
+}
+
+  
+void i2c_master_write_register(u8 SlaveAddress,u8 RegisterAddr,u8 RegisterLen,u8* send_buf)
+{
+  uint8_t T2C_feedback_waitcnt;
+  I2C_Start();
+  I2C_SendByte(SlaveAddress);
+  while(!I2C_WaitAck())
+  {
+    T2C_feedback_waitcnt++;
+    if(T2C_feedback_waitcnt > 5)
+    {
+      S0_write_reg_succeed = 0;
+      return;
+    }
+  }
+  
+  I2C_SendByte(RegisterAddr);
+  while(!I2C_WaitAck());
+  for(uint8_t i=0;i<RegisterLen;i++)
+  {
+    I2C_SendByte(send_buf[i]);
+    while(!I2C_WaitAck());
+  }
+  I2C_Stop();
+}
+
+void i2c_master_read_register(u8 SlaveAddress,u8 RegisterAddr,u8 RegisterLen,u8* recv_buf)
+{
+  u8 i;
+  I2C_Start();
+  I2C_SendByte(SlaveAddress);
+  while(!I2C_WaitAck());
+  
+  I2C_SendByte(RegisterAddr);
+  while(!I2C_WaitAck());
+  
+  I2C_Start();
+  I2C_SendByte(SlaveAddress+1);
+  while(!I2C_WaitAck());
+  
+  for(i=0;i<RegisterLen;i++)
+  {
+    recv_buf[i] = I2C_ReadByte();
+    if(i == (RegisterLen-1)) I2C_NoAck();
+    else I2C_Ack();
+  }
+  I2C_Stop();
+}
+
+void io_haldware_reg_write(uint8_t reg, uint8_t *buf, uint16_t buf_size)
+{
+  i2c_master_write_register(ICM_I2C_ADDR, reg, buf_size, buf);
+}
+void write_1B(uint8_t reg, uint8_t one_data)
+{
+  uint8_t temp;
+  temp = one_data;
+  io_haldware_reg_write(reg,&temp,1);	
+}
+void io_haldware_reg_read(uint8_t reg, uint8_t *buf, uint16_t buf_size)
+{
+  i2c_master_read_register(ICM_I2C_ADDR, reg, buf_size, buf);
+}
+void read_1B(uint8_t reg,uint8_t *temp)
+{
+  io_haldware_reg_read(reg,temp,1);	
+}
+
+
+
+
+
+
